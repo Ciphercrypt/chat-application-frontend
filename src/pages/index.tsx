@@ -2,6 +2,8 @@ import { useContext } from "react";
 import ConversationDetails from "../components/ConversationDetails";
 import SideBar from "../components/SideBar";
 import { ConversationContext } from "../context/ConversationContext";
+import SendInvitePage from "../components/Invites/sendinvite";
+import InvitesPage from "../components/Invites/allinvites";
 
 export default function Home() {
   const { conversation } = useContext(ConversationContext);
@@ -30,8 +32,8 @@ export default function Home() {
       <div className="flex flex-col items-center mt-10">
         <h1 className="text-[#e9edef] text-3xl font-extralight">WhatsApp Web</h1>
         <div className="flex flex-col mt-4 w-11/12 text-center text-[#8696a0] text-base font-light">
-          <h2>Agora você pode enviar e receber mensagens sem precisar manter seu celular conectado à internet</h2>
-          <h2>Use o WhatsApp em até quatro aparelhos conectados e um celular ao mesmo tempo.</h2>
+          <h2>Now you can send and receive messages without having to keep your phone connected to the internet</h2>
+          <h2>Use WhatsApp on up to four connected devices and a cell phone at the same time.</h2>
         </div>
         <div className="my-6 border-b-[1px] border-[rgba(134,150,160,0.15)] w-full">
         </div>
@@ -53,11 +55,13 @@ export default function Home() {
       <div className="flex w-full xl:container h-screen xl:py-4">
         <SideBar />
         <div className="flex w-[70%] bg-[#222E35]">
-          {
+          {/* {
             conversation.contactName
               ? <ConversationDetails />
               : <IconHome />
-          }
+          } */}
+          {/* <SendInvitePage /> */}
+          <InvitesPage />
         </div>
       </div>
     </div>

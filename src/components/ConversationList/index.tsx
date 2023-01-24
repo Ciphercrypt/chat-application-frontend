@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { ConversationContext } from "../../context/ConversationContext";
 import Avatar from "../Avatar";
 import { ConversationListData } from "../../types/Conversation"
+import SendInvitePage from "../Invites/sendinvite";
 
 interface ConversationListProps {
   isFirstConversation?: boolean;
