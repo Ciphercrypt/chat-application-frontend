@@ -1,0 +1,320 @@
+{
+  "conversation_list": [
+    {
+      "contactName": "José",
+      "lastMessage": "Last message ",
+      "lastTime": "19:15",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Do we have college class today?"
+        },
+        {
+          "me": false ,
+          "message": "Not today, just tomorrow.Don't forget the work ..."
+        }
+      ]
+    },
+    {
+      "contactName": "Maria",
+      "lastMessage": "Last message ",
+      "lastTime": "05:43",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Have you seen that series that is pumping on Netflix?"
+        },
+        {
+          "me": true ,
+          "message": "Yes, I saw it, I found it great and I can't wait for the next season !!!"
+        }
+      ]
+    },
+    {
+      "contactName": "Ana",
+      "lastMessage": "Last message ",
+      "lastTime": "11:22",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Pedro",
+      "lastMessage": "Last message ",
+      "lastTime": "10:36",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Paula",
+      "lastMessage": "Last message ",
+      "lastTime": "14:15",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Rogério",
+      "lastMessage": "Last message ",
+      "lastTime": "17:27",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Rafael",
+      "lastMessage": "Last message ",
+      "lastTime": "18:16",
+      "image": "avatar3.png",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Marcela",
+      "lastMessage": "Last message ",
+      "lastTime": "07:24",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Marcos",
+      "lastMessage": "Last message ",
+      "lastTime": "20:46",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Patricia",
+      "lastMessage": "Last message ",
+      "lastTime": "13:18",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Samuel",
+      "lastMessage": "Last message ",
+      "lastTime": "14:33",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "João",
+      "lastMessage": "Last message ",
+      "lastTime": "19:42",
+      "image": "avatar3.png",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Luiz",
+      "lastMessage": "Last message ",
+      "lastTime": "16:13",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Marcos",
+      "lastMessage": "Last message ",
+      "lastTime": "22:36",
+      "image": "avatar.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Alberto",
+      "lastMessage": "Last message ",
+      "lastTime": "21:27",
+      "image": "avatar3.png",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    },
+    {
+      "contactName": "Bianca",
+      "lastMessage": "Last message ",
+      "lastTime": "12:18",
+      "image": "avatar2.jpg",
+      "messageHistory": [
+        {
+          "me": true ,
+          "message": "Hello Are you okay?"
+        },
+        {
+          "me": false ,
+          "message": "Everything great and you?"
+        },
+        {
+          "me": false ,
+          "message": "Tomorrow are you going to the barbecue?"
+        }
+      ]
+    }
+  ]
+}
