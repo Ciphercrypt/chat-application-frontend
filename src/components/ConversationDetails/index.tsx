@@ -64,7 +64,7 @@ export default function ConversationDetails() {
           </svg>
         </div>
         <div className="flex w-[85%] h-12 ml-3">
-          <input type={"text"} className="bg-[#2a3942] rounded-lg w-full px-3 py-3 text-white" placeholder="Mensagem" onKeyDown={(evt) => changeHandler(evt) } onChange={ (evt) => setMessageSend(evt.target.value) } value={messageSend} />
+          <input type={"text"} className="bg-[#2a3942] rounded-lg w-full px-3 py-3 text-white" placeholder="Start typing.." onKeyDown={(evt) => changeHandler(evt) } onChange={ (evt) => setMessageSend(evt.target.value) } value={messageSend} />
         </div>
         <div className="flex justify-center items-center w-[5%] h-12">
           <svg viewBox="0 0 24 24" width="24" height="24" className="cursor-pointer">
