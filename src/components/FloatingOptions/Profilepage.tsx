@@ -27,7 +27,7 @@ return (
                 
             <div className="flex items-center">
             <Avatar width="w-10" height="w-10" image="avatar.jpg" />
-            <div className="ml-4 text-lg font-medium text-white">Shantaram Kamble</div>
+            <div className="ml-4 text-lg font-medium text-white">Aakanksha Shinde</div>
         </div>
             </div>
         </div>

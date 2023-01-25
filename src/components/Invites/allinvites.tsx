@@ -1,46 +1,111 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from "react";
 
-const InvitesPage = () => {
-  const [sentInvites, setSentInvites] = useState([
-    { id: 1, email: 'person1@example.com', status: 'pending' },
-    { id: 2, email: 'person2@example.com', status: 'accepted' },
-    { id: 3, email: 'person3@example.com', status: 'declined' },
-  ]);
+import { KeyboardEvent, useContext, useEffect, useState } from "react";
+import Avatar from "../Avatar";
+import { ConversationContext } from "../../context/ConversationContext";
+import ConversationList from "../ConversationList";
+import InviteList from "../ConversationList/invitelist";
+import conversations from "../../data.json";
 
-  const [incomingInvites, setIncomingInvites] = useState([
-    { id: 4, from: 'person4@example.com', status: 'pending' },
-    { id: 5, from: 'person5@example.com', status: 'accepted' },
-    { id: 6, from: 'person6@example.com', status: 'declined' },
-  ]);
+export default function InvitesPage() {
+ 
+  
+  const [search, setSearch] = useState("");
+  const [received, setrecieved] = useState(true);
+  const [sent, setsent] = useState(false);
 
+  const conversationsList = conversations.conversation_list;
+  const filteredConversationsList =
+    search.length > 0
+      ? conversationsList.filter((InviteList) =>
+      InviteList.contactName.toLowerCase().includes(search)
+        )
+      : conversationsList;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Search for username code here
+  };
+
+
+  
+  function HandleClickofheadsent()
+  {
+    setrecieved(false);
+    setsent(true);
+    
+
+  }
+
+  function HandleClickofheadrecieved()
+  {
+    setsent(false);
+    setrecieved(true);
+
+
+  }
   return (
-    <div className="mx-auto p-4 max-w-screen-md">
-      <h1 className="text-2xl font-medium text-gray-800 mb-4">Invites</h1>
-      <h2 className="text-lg font-medium text-gray-800 mb-4">Sent Invites</h2>
-      <div className="bg-gray-200 rounded-lg p-4">
-        {sentInvites.map((invite) => (
-          <div key={invite.id} className="border-b border-gray-300 py-2">
-            <div className="flex items-center justify-between">
-              <div className="text-gray-700">{invite.email}</div>
-              <div className="text-gray-500">{invite.status}</div>
-            </div>
+    <div className="flex flex-col w-full ">
+      <div className="flex justify-between w-full px-4">
+        <div className="flex justify-between bg-[#202c33] w-full h-14">
+          <div className="flex items-center gap-4 h-full">
+            <h1 className="text-white font-normal">
+              <div className="ml-8">All Invites</div>
+            </h1>
           </div>
-        ))}
+        </div>
       </div>
-      <h2 className="text-lg font-medium text-gray-800 my-4">Incoming Invites</h2>
-      <div className="bg-gray-200 rounded-lg p-4">
-        {incomingInvites.map((invite) => (
-          <div key={invite.id} className="border-b border-gray-300 py-2">
-            <div className="flex items-center justify-between">
-              <div className="text-gray-700">{invite.from}</div>
-              <div className="text-gray-500">{invite.status}</div>
-            </div>
-          </div>
-        ))}
+      <footer className="flex items-center bg-[#202c33] w-full h-16 py-3 text-[#8696a0]">
+        <div className="ml-8">
+          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg mr-2 hover:bg-black" 
+          onClick={ () => HandleClickofheadrecieved() }
+          >
+            Recieved
+          </button>
+          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-black"
+          onClick={ () => HandleClickofheadsent()}
+            >
+            Sent
+          </button>
+        </div>
+      </footer>
+
+     { received && <div
+        className="flex flex-col w-full overflow-y-scroll "
+        id="conversation"
+      >
+        recieved
+        {filteredConversationsList.map((conversation, index) => {
+          return (
+            <InviteList
+              key={index}
+              isFirstConversation={index == 0}
+              data={conversation}
+              isSent={false}
+            />
+          );
+        })}
+      </div>}
+
+      {sent &&  <div
+        className="flex flex-col w-full overflow-y-scroll "
+        id="conversation"
+      >
+        sent
+        {filteredConversationsList.map((conversation, index) => {
+          return (
+            <InviteList
+              key={index}
+              isFirstConversation={index == 0}
+              data={conversation}
+              isSent={true}
+            />
+          );
+        })}
       </div>
+      }
+
+      <footer className="flex items-center bg-[#202c33] w-full h-16 py-3 text-[#8696a0]"></footer>
     </div>
   );
-};
-
-export default InvitesPage;
+}

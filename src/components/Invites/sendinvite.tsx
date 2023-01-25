@@ -8,10 +8,8 @@ import { ConversationContext } from "../../context/ConversationContext";
 
 
 export default function SendInvitePage() {
-  const [messageSend, setMessageSend] = useState("");
+  
   const [username, setUsername] = useState("");
-  const { conversation, message, setMessage } = useContext(ConversationContext);
-  const { contactName, image, messageHistory } = conversation;
 
   const handleSubmit = (e) => {
     e.preventDefault();

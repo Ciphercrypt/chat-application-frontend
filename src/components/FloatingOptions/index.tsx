@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-const NotificationPanel = () => {
+
+  
+  const NotificationPanel = ({setsendinvite,setseeallinvites}) => {
 const [notifications, setNotifications] = useState([
 { id: 1, text: "Send Invite", read: false },
-{ id: 2, text: "See All Invites", read: true },
+{ id: 2, text: "See All Invites", read: false },
 
 ]);
 
-const handleNotificationClick = (id: number) => {
-    setNotifications(notifications.map(notification => {
-        if (notification.id === id) {
-            return { ...notification, read: true };
-        }else
-        {
-            return { ...notification, read: false };
+function handleNotificationClick(id: number) {
+  
+        if (id === 1) {
+            setseeallinvites(false);
+            setsendinvite(true);
+            console.log("clocked 1");
+           
         }
-        return notification;
-    }));
+
+         if(id==2)
+        {
+            setsendinvite(false);
+            setseeallinvites(true);
+            console.log("clocked 2");
+        }
+       
 };
 
 return (

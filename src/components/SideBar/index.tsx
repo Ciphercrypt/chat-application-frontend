@@ -6,7 +6,7 @@ import NotificationPanel from "../FloatingOptions";
 import ProfilePage from "../FloatingOptions/Profilepage";
 import SearchPeople from "../FloatingOptions/SearchPeople";
 
-export default function SideBar() {
+export default function SideBar({setsendinvite,setseeallinvites}) {
   const conversationsList = conversations.conversation_list;
   const [search, setSearch] = useState("");
   const filteredConversationsList =
@@ -126,7 +126,14 @@ export default function SideBar() {
               ></path>
             </svg>
           </div>
-          {showinvite && <NotificationPanel />}
+          {showinvite && <NotificationPanel
+
+           
+            setsendinvite={setsendinvite}
+           
+            setseeallinvites={setseeallinvites}
+            
+           />}
         </div>
       </div>
 
