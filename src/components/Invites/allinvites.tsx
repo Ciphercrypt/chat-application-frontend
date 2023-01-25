@@ -8,8 +8,6 @@ import InviteList from "../ConversationList/invitelist";
 import conversations from "../../data.json";
 
 export default function InvitesPage() {
- 
-  
   const [search, setSearch] = useState("");
   const [received, setrecieved] = useState(true);
   const [sent, setsent] = useState(false);
@@ -18,7 +16,7 @@ export default function InvitesPage() {
   const filteredConversationsList =
     search.length > 0
       ? conversationsList.filter((InviteList) =>
-      InviteList.contactName.toLowerCase().includes(search)
+          InviteList.contactName.toLowerCase().includes(search)
         )
       : conversationsList;
 
@@ -27,22 +25,14 @@ export default function InvitesPage() {
     // Search for username code here
   };
 
-
-  
-  function HandleClickofheadsent()
-  {
+  function HandleClickofheadsent() {
     setrecieved(false);
     setsent(true);
-    
-
   }
 
-  function HandleClickofheadrecieved()
-  {
+  function HandleClickofheadrecieved() {
     setsent(false);
     setrecieved(true);
-
-
   }
   return (
     <div className="flex flex-col w-full ">
@@ -57,53 +47,62 @@ export default function InvitesPage() {
       </div>
       <footer className="flex items-center bg-[#202c33] w-full h-16 py-3 text-[#8696a0]">
         <div className="ml-8">
-          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg mr-2 hover:bg-black" 
-          onClick={ () => HandleClickofheadrecieved() }
+          <button
+            className={`px-4 py-2 text-sm font-medium text-white rounded-lg mr-2 hover:bg-black ${
+              received ? "bg-green-500" : "bg-gray-700"
+            }`}
+            onClick={() => HandleClickofheadrecieved()}
           >
             Recieved
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-black"
-          onClick={ () => HandleClickofheadsent()}
-            >
+          <button
+            className={`px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-black ${
+              sent ? "bg-green-500" : "bg-gray-700"
+            }`}
+            onClick={() => HandleClickofheadsent()}
+          >
             Sent
           </button>
         </div>
       </footer>
 
-     { received && <div
-        className="flex flex-col w-full overflow-y-scroll "
-        id="conversation"
-      >
-        recieved
-        {filteredConversationsList.map((conversation, index) => {
-          return (
-            <InviteList
-              key={index}
-              isFirstConversation={index == 0}
-              data={conversation}
-              isSent={false}
-            />
-          );
-        })}
-      </div>}
+      {received && (
+        <div
+          className="flex flex-col w-full overflow-y-scroll "
+          id="conversation"
+        >
+         
+          {filteredConversationsList.map((conversation, index) => {
+            return (
+              <InviteList
+                key={index}
+                isFirstConversation={index == 0}
+                data={conversation}
+                isSent={false}
+              />
+            );
+          })}
+        </div>
+      )}
 
-      {sent &&  <div
-        className="flex flex-col w-full overflow-y-scroll "
-        id="conversation"
-      >
-        sent
-        {filteredConversationsList.map((conversation, index) => {
-          return (
-            <InviteList
-              key={index}
-              isFirstConversation={index == 0}
-              data={conversation}
-              isSent={true}
-            />
-          );
-        })}
-      </div>
-      }
+      {sent && (
+        <div
+          className="flex flex-col w-full overflow-y-scroll "
+          id="conversation"
+        >
+      
+          {filteredConversationsList.map((conversation, index) => {
+            return (
+              <InviteList
+                key={index}
+                isFirstConversation={index == 0}
+                data={conversation}
+                isSent={true}
+              />
+            );
+          })}
+        </div>
+      )}
 
       <footer className="flex items-center bg-[#202c33] w-full h-16 py-3 text-[#8696a0]"></footer>
     </div>
