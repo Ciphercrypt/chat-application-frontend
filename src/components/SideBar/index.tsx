@@ -5,8 +5,13 @@ import { useState, useEffect } from "react";
 import NotificationPanel from "../FloatingOptions";
 import ProfilePage from "../FloatingOptions/Profilepage";
 import SearchPeople from "../FloatingOptions/SearchPeople";
+import axios from 'axios';
+
 
 export default function SideBar({setsendinvite,setseeallinvites}) {
+
+
+ 
   const conversationsList = conversations.conversation_list;
   const [search, setSearch] = useState("");
   const filteredConversationsList =
@@ -16,6 +21,7 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
         )
       : conversationsList;
 
+      console.log(filteredConversationsList)
   const [showprofile, setshowprofile] = useState(false);
   const [showaddPeople, setshowaddPeople] = useState(false);
   const [showinvite, setshowinvite] = useState(false);
@@ -67,6 +73,66 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
     }
     setshowaddPeople(!showaddPeople);
   }
+
+
+
+
+  const [chatData, setChatData] = useState([]);
+  const [currentUser, setCurrentUser] = useState('');
+
+  useEffect(() => {
+    // Make a GET request to the first API
+    axios.get('localhost:8080/friend/all', {
+      headers: {
+        Authorization: currentUser
+      }
+    })
+    .then(res => {
+      const friendList = res.data;
+
+      // Loop through the friend list
+      friendList.forEach(async friend => {
+        const friendName = friend.friend;
+        // Make a GET request to the second API
+        const response = await axios.get('localhost:8080/text/username', {
+          headers: {
+            Authorization: friendName
+          }
+        });
+        const messageHistory = response.data;
+        
+        // Make a GET request to the third API
+        const avatarResponse = await axios.get('localhost:8080/user/data', {
+          headers: {
+            Authorization: friendName
+          }
+        });
+        const avatar = avatarResponse.data;
+
+        // Format the data as described
+        const formattedData = {
+          "contactName": friendName,
+          "lastMessage": messageHistory[messageHistory.length - 1].message,
+          "image": avatar,
+          "messageHistory": messageHistory.map(message => {
+            return {
+              "me": message.sender === currentUser,
+              "message": message.message
+            }
+          })
+        };
+
+        // Add the formatted data to the chatData state
+        setChatData(prevChatData => [...prevChatData, formattedData]);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }, [currentUser]);
+
+
+  
 
   return (
     <div
@@ -180,7 +246,7 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
 
       <div className="flex flex-col w-full overflow-y-scroll" id="conversation">
         {filteredConversationsList.map((conversation, index) => {
-          return (
+          return (        
             <ConversationList
               key={index}
               isFirstConversation={index == 0}

@@ -5,6 +5,7 @@ import { ConversationContext } from "../context/ConversationContext";
 import SendInvitePage from "../components/Invites/sendinvite";
 import InvitesPage from "../components/Invites/allinvites";
 import IconHome from "../components/Home";
+import LoginScreen from "../components/auth/login";
 
 export default function Home() {
   const { conversation } = useContext(ConversationContext);
@@ -50,7 +51,9 @@ export default function Home() {
   return (
     <>
          
-<div className="flex justify-center">
+
+         
+ <div className="flex justify-center">
       
       <div className="flex w-full xl:container h-screen xl:py-4">
         <SideBar
@@ -70,7 +73,7 @@ setseeallinvites={setseeallinvites}
           {seeallinvites  &&   <InvitesPage /> }
         </div>
       </div>
-    </div>
+    </div> 
 
     </>
    
