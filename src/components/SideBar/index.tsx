@@ -91,12 +91,12 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
       const friendList = res.data;
 
       // Loop through the friend list
-      friendList.forEach(async friend => {
+      friendList.forEach(async (friend: { friend: any; }) => {
         const friendName = friend.friend;
         // Make a GET request to the second API
-        const response = await axios.get('localhost:8080/text/username', {
+        const response = await axios.get(`localhost:8080/text/${friendName}`, {
           headers: {
-            Authorization: friendName
+            Authorization: currentUser
           }
         });
         const messageHistory = response.data;
@@ -114,7 +114,8 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
           "contactName": friendName,
           "lastMessage": messageHistory[messageHistory.length - 1].message,
           "image": avatar,
-          "messageHistory": messageHistory.map(message => {
+          "lastTime": "19:15",
+          "messageHistory": messageHistory.map((message: { sender: string; message: any; }) => {
             return {
               "me": message.sender === currentUser,
               "message": message.message
@@ -132,7 +133,7 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
   }, [currentUser]);
 
 
-  
+
 
   return (
     <div
