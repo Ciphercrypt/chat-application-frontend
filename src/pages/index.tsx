@@ -51,8 +51,8 @@ export default function Home() {
   return (
     <>
          
-         <LoginScreen />
-{/* 
+         {/* <LoginScreen/> */}
+
          
  <div className="flex justify-center">
       
@@ -74,7 +74,7 @@ setseeallinvites={setseeallinvites}
           {seeallinvites  &&   <InvitesPage /> }
         </div>
       </div>
-    </div>  */}
+    </div>  
 
     </>
    
