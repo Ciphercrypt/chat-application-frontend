@@ -21,7 +21,7 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
         )
       : conversationsList;
 
-      console.log(filteredConversationsList)
+      //console.log(filteredConversationsList)
   const [showprofile, setshowprofile] = useState(false);
   const [showaddPeople, setshowaddPeople] = useState(false);
   const [showinvite, setshowinvite] = useState(false);
@@ -80,7 +80,10 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
   const [chatData, setChatData] = useState([]);
   const [currentUser, setCurrentUser] = useState('');
 
+  
   useEffect(() => {
+
+    setCurrentUser("Hreshi");
     // Make a GET request to the first API
     axios.get('localhost:8080/friend/all', {
       headers: {
@@ -101,13 +104,13 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
         });
         const messageHistory = response.data;
         
-        // Make a GET request to the third API
-        const avatarResponse = await axios.get('localhost:8080/user/data', {
-          headers: {
-            Authorization: friendName
-          }
-        });
-        const avatar = avatarResponse.data;
+        // // Make a GET request to the third API
+        // const avatarResponse = await axios.get('localhost:8080/user/data', {
+        //   headers: {
+        //     Authorization: friendName
+        //   }
+        // });
+        const avatar = 'avatar.jpg';
 
         // Format the data as described
         const formattedData = {
@@ -133,6 +136,8 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
   }, [currentUser]);
 
 
+  if(chatData!==filteredConversationsList)
+  console.log("aakanksha ");
 
 
   return (
@@ -246,7 +251,17 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
 }
 
       <div className="flex flex-col w-full overflow-y-scroll" id="conversation">
-        {filteredConversationsList.map((conversation, index) => {
+        {/* {chatData.map((conversation, index) => {
+          return (        
+            <ConversationList
+              key={index}
+              isFirstConversation={index == 0}
+              data={conversation}
+            />
+          );
+        })} */}
+
+{filteredConversationsList.map((conversation, index) => {
           return (        
             <ConversationList
               key={index}
@@ -255,6 +270,8 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
             />
           );
         })}
+
+
       </div>
     </div>
   );
