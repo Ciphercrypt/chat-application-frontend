@@ -11,7 +11,7 @@
 body {
   font-family: Segoe UI,Helvetica Neue,Helvetica,Lucida Grande,Arial,Ubuntu,Cantarell,Fira Sans,sans-serif;
   font-size: 16px;
-  background: #0a1014;
+  background: transparent;
 }
 
 input:focus{
