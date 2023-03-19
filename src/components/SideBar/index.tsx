@@ -1,17 +1,53 @@
-import Avatar from "../Avatar";
 import ConversationList from "../ConversationList";
 import conversations from "../../data.json";
 import { useState, useEffect } from "react";
 import NotificationPanel from "../FloatingOptions";
 import ProfilePage from "../FloatingOptions/Profilepage";
 import SearchPeople from "../FloatingOptions/SearchPeople";
-import axios from 'axios';
+import axios from "axios";
+import Avatar from "@mui/material/Avatar";
 
+export default function SideBar({ setsendinvite, setseeallinvites }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [avatarImage, setAvatarImage] = useState("");
+  useEffect(() => {
+    // Fetch user info from the API using the email stored in localStorage
+    const userEmail = localStorage.getItem("userEmail");
+    fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setName(data.name);
+        setEmail(data.email);
+        setAvatarImage(data.avatarUrl);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
-export default function SideBar({setsendinvite,setseeallinvites}) {
+  const userEmail = localStorage.getItem("userEmail");
+  const token = localStorage.getItem("token");
 
+  useEffect(() => {
+    async function fetchFriends() {
+      const headers = {
+        Accept: "*/*",
+        Authorization: `Bearer ${token}`,
+        username: userEmail as string,
+      };
 
- 
+      const getFriends = await fetch(
+        "http://localhost:8080/api/conversation/my-conversation",
+
+        { headers }
+      );
+      const allFriends = await getFriends.json();
+
+      console.log(allFriends);
+    }
+
+    fetchFriends();
+  }, [userEmail, token]);
+
   const conversationsList = conversations.conversation_list;
   const [search, setSearch] = useState("");
   const filteredConversationsList =
@@ -21,7 +57,7 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
         )
       : conversationsList;
 
-      //console.log(filteredConversationsList)
+  //console.log(filteredConversationsList)
   const [showprofile, setshowprofile] = useState(false);
   const [showaddPeople, setshowaddPeople] = useState(false);
   const [showinvite, setshowinvite] = useState(false);
@@ -74,71 +110,69 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
     setshowaddPeople(!showaddPeople);
   }
 
-
-
-
   const [chatData, setChatData] = useState([]);
-  const [currentUser, setCurrentUser] = useState('');
+  const [currentUser, setCurrentUser] = useState("");
 
-  
   useEffect(() => {
-
     setCurrentUser("Hreshi");
     // Make a GET request to the first API
-    axios.get('localhost:8080/friend/all', {
-      headers: {
-        Authorization: currentUser
-      }
-    })
-    .then(res => {
-      const friendList = res.data;
+    axios
+      .get("localhost:8080/friend/all", {
+        headers: {
+          Authorization: currentUser,
+        },
+      })
+      .then((res) => {
+        const friendList = res.data;
 
-      // Loop through the friend list
-      friendList.forEach(async (friend: { friend: any; }) => {
-        const friendName = friend.friend;
-        // Make a GET request to the second API
-        const response = await axios.get(`localhost:8080/text/${friendName}`, {
-          headers: {
-            Authorization: currentUser
-          }
-        });
-        const messageHistory = response.data;
-        
-        // // Make a GET request to the third API
-        // const avatarResponse = await axios.get('localhost:8080/user/data', {
-        //   headers: {
-        //     Authorization: friendName
-        //   }
-        // });
-        const avatar = 'avatar.jpg';
-
-        // Format the data as described
-        const formattedData = {
-          "contactName": friendName,
-          "lastMessage": messageHistory[messageHistory.length - 1].message,
-          "image": avatar,
-          "lastTime": "19:15",
-          "messageHistory": messageHistory.map((message: { sender: string; message: any; }) => {
-            return {
-              "me": message.sender === currentUser,
-              "message": message.message
+        // Loop through the friend list
+        friendList.forEach(async (friend: { friend: any }) => {
+          const friendName = friend.friend;
+          // Make a GET request to the second API
+          const response = await axios.get(
+            `localhost:8080/text/${friendName}`,
+            {
+              headers: {
+                Authorization: currentUser,
+              },
             }
-          })
-        };
+          );
+          const messageHistory = response.data;
 
-        // Add the formatted data to the chatData state
-        setChatData(prevChatData => [...prevChatData, formattedData]);
+          // // Make a GET request to the third API
+          // const avatarResponse = await axios.get('localhost:8080/user/data', {
+          //   headers: {
+          //     Authorization: friendName
+          //   }
+          // });
+          const avatar = "avatar.jpg";
+
+          // Format the data as described
+          const formattedData = {
+            contactName: friendName,
+            lastMessage: messageHistory[messageHistory.length - 1].message,
+            image: avatar,
+            lastTime: "19:15",
+            messageHistory: messageHistory.map(
+              (message: { sender: string; message: any }) => {
+                return {
+                  me: message.sender === currentUser,
+                  message: message.message,
+                };
+              }
+            ),
+          };
+
+          // Add the formatted data to the chatData state
+          setChatData((prevChatData) => [...prevChatData, formattedData]);
+        });
+      })
+      .catch((err) => {
+        console.error(err);
       });
-    })
-    .catch(err => {
-      console.error(err);
-    });
   }, [currentUser]);
 
-
-  if(chatData!==filteredConversationsList)
-  console.log("aakanksha ");
-
+  if (chatData !== filteredConversationsList) console.log("aakanksha ");
 
   return (
     <div
@@ -154,11 +188,13 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
           onClick={() => Handleclickofprofile()}
         >
           <div className="flex cursor-pointer">
-            <Avatar width="w-10" height="w-10" image="avatar.jpg" />
+            <Avatar src={avatarImage} />
           </div>
         </div>
         <div className="mr-20">
-          {isOpen && showprofile && <ProfilePage />}
+          {isOpen && showprofile && (
+            <ProfilePage name={name} email={email} avatarUrl={avatarImage} />
+          )}
         </div>
 
         <div className="flex gap-2">
@@ -181,7 +217,6 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
             </svg>
           </div>
 
-
           <div
             className="flex cursor-pointer w-10 h-10 items-center justify-center"
             onClick={() => Handleclickofinvite()}
@@ -198,57 +233,56 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
               ></path>
             </svg>
           </div>
-          {showinvite && <NotificationPanel
-
-           
-            setsendinvite={setsendinvite}
-           
-            setseeallinvites={setseeallinvites}
-            
-           />}
+          {showinvite && (
+            <NotificationPanel
+              setsendinvite={setsendinvite}
+              setseeallinvites={setseeallinvites}
+            />
+          )}
         </div>
       </div>
 
-    {   showaddPeople &&   <div className="flex bg-[#111b21] w-full h-max px-3 py-2">
-        <div className="relative w-[95%] h-max">
-          <div className="absolute text-[#AEBAC1] h-full w-9">
+      {showaddPeople && (
+        <div className="flex bg-[#111b21] w-full h-max px-3 py-2">
+          <div className="relative w-[95%] h-max">
+            <div className="absolute text-[#AEBAC1] h-full w-9">
+              <svg
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                className="left-[50%] right-[50%] ml-auto mr-auto h-full"
+              >
+                <path
+                  fill="currentColor"
+                  d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.183 5.183 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"
+                ></path>
+              </svg>
+            </div>
+            <div className="">
+              <input
+                className="w-[96%] h-9 rounded-lg bg-[#202c33] text-white text-sm px-10"
+                placeholder="Search or start a new conversation"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex w-[5%] h-full items-center justify-center">
             <svg
               viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              className="left-[50%] right-[50%] ml-auto mr-auto h-full"
+              width="20"
+              height="20"
+              preserveAspectRatio="xMidYMid meet"
+              className="text-[#778690]"
             >
               <path
                 fill="currentColor"
-                d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.183 5.183 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"
+                d="M10 18.1h4v-2h-4v2zm-7-12v2h18v-2H3zm3 7h12v-2H6v2z"
               ></path>
             </svg>
           </div>
-          <div className="">
-            <input
-              className="w-[96%] h-9 rounded-lg bg-[#202c33] text-white text-sm px-10"
-              placeholder="Search or start a new conversation"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
         </div>
-        <div className="flex w-[5%] h-full items-center justify-center">
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            preserveAspectRatio="xMidYMid meet"
-            className="text-[#778690]"
-          >
-            <path
-              fill="currentColor"
-              d="M10 18.1h4v-2h-4v2zm-7-12v2h18v-2H3zm3 7h12v-2H6v2z"
-            ></path>
-          </svg>
-        </div>
-      </div>
-}
+      )}
 
       <div className="flex flex-col w-full overflow-y-scroll" id="conversation">
         {/* {chatData.map((conversation, index) => {
@@ -261,8 +295,8 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
           );
         })} */}
 
-{filteredConversationsList.map((conversation, index) => {
-          return (        
+        {filteredConversationsList.map((conversation, index) => {
+          return (
             <ConversationList
               key={index}
               isFirstConversation={index == 0}
@@ -270,8 +304,6 @@ export default function SideBar({setsendinvite,setseeallinvites}) {
             />
           );
         })}
-
-
       </div>
     </div>
   );

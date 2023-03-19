@@ -8,27 +8,79 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+const jwt = require("jsonwebtoken");
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { useEffect } from 'react';
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const theme = createTheme();
 
-export default function LoginScreen() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+export default function LoginScreen({isLoggedIn,setIsLoggedIn}) {
+
+
+
+
+  
+  
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+
+ 
+  
+  event.preventDefault();
+
+  
+  const data = new FormData(event.currentTarget);
+  console.log({
+    email: data.get('email'),
+    password: data.get('password'),
+  });
+
+  const formData = new FormData();
+
+  formData.append("email", data.get('email') as string);
+  formData.append("password", data.get('password') as string);
+
+
+  try {
+    const response = await fetch('http://localhost:8080/api/login', {
+      method: 'POST',
+      body: formData,
     });
-  };
+
+    if (!response.ok) {
+      toast.error("Failed to login");
+      console.error('Failed to login');
+      return;
+    }
+
+    console.log('Logged in successfully');
+    toast.success("Logged in successfully");
+    console.log(JSON.stringify(response));
+    const { token } = await response.json();
+    const decodedToken = jwt.decode(token);
+    console.log(decodedToken.sub);
+    
+    localStorage.setItem("userEmail", decodedToken.sub);
+    localStorage.setItem("token", JSON.stringify(token));
+
+
+  setIsLoggedIn(true);
+   
+    //redirect to /home
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -79,13 +131,9 @@ export default function LoginScreen() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
+              
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

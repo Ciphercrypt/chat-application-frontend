@@ -6,24 +6,117 @@ import { ConversationContext } from "../../context/ConversationContext";
 import ConversationList from "../ConversationList";
 import InviteList from "../ConversationList/invitelist";
 import conversations from "../../data.json";
+import InviteComp from "./inviteComp";
 
 export default function InvitesPage() {
   const [search, setSearch] = useState("");
   const [received, setrecieved] = useState(true);
   const [sent, setsent] = useState(false);
+  const [invites, setInvites] = useState([]);
+  const [invitesReceived, setInvitesReceived] = useState([]);
 
-  const conversationsList = conversations.conversation_list;
-  const filteredConversationsList =
-    search.length > 0
-      ? conversationsList.filter((InviteList) =>
-          InviteList.contactName.toLowerCase().includes(search)
-        )
-      : conversationsList;
+  // const conversationsList = conversations.conversation_list;
+  // const filteredConversationsList =
+  //   search.length > 0
+  //     ? conversationsList.filter((InviteList) =>
+  //         InviteList.contactName.toLowerCase().includes(search)
+  //       )
+  //     : conversationsList;
 
-  const handleSubmit = (e) => {
+  //     console.log(filteredConversationsList);
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     // Search for username code here
   };
+
+  const userEmail = localStorage.getItem("userEmail");
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    async function fetchInvites() {
+      const headers = {
+        Accept: "*/*",
+        Authorization: `Bearer ${token}`,
+        username: userEmail as string,
+      };
+
+      const sentInvitesResponse = await fetch(
+        "http://localhost:8080/api/invite/sent",
+
+        { headers }
+      );
+      const sentInvitesData1 = await sentInvitesResponse.json();
+      //const sentInvitesData = JSON.stringify(sentInvitesData1);
+
+    //  console.log("avi"+sentInvitesData1);
+
+      const receivedInvitesResponse = await fetch(
+        "http://localhost:8080/api/invite/received",
+        { headers }
+      );
+
+      const receivedInvitesData1 = await receivedInvitesResponse.json();
+      //const receivedInvitesData =  JSON.stringify(receivedInvitesData1);
+
+      // console.log(receivedInvitesData1);
+      const emailsRec= new Set();
+
+      for(const email of receivedInvitesData1){
+        emailsRec.add(email.email);
+      }
+
+      const receivedUserData = await Promise.all(
+        Array.from(emailsRec).map(async (email) => {
+          const userResponse = await fetch(
+            `http://localhost:8080/api/user/info/${email}`,
+            { headers }
+          );
+          const receivedUserData = await userResponse.json();
+          return {
+            userEmail: receivedUserData.email,
+            name: receivedUserData.name,
+            issent: 0,
+            avatarUrl: receivedUserData.avatarUrl,
+            
+          };
+        })
+      );
+
+
+      const emails = new Set();
+
+      for(const email of sentInvitesData1){
+        emails.add(email.email);
+      }
+     
+
+      
+      const usersData = await Promise.all(
+        Array.from(emails).map(async (email) => {
+          const userResponse = await fetch(
+            `http://localhost:8080/api/user/info/${email}`,
+            { headers }
+          );
+          const userData = await userResponse.json();
+          return {
+            userEmail: userData.email,
+            name: userData.name,
+            issent: 1,
+            avatarUrl: userData.avatarUrl,
+            
+          };
+        })
+      );
+
+      console.log("userData:"+usersData);
+      setInvites(usersData);
+
+      console.log(receivedUserData);
+      setInvitesReceived(receivedUserData);
+    }
+
+    fetchInvites();
+  }, [userEmail, token]);
 
   function HandleClickofheadsent() {
     setrecieved(false);
@@ -53,7 +146,7 @@ export default function InvitesPage() {
             }`}
             onClick={() => HandleClickofheadrecieved()}
           >
-            Recieved
+            Sent Requests
           </button>
           <button
             className={`px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-black ${
@@ -61,7 +154,7 @@ export default function InvitesPage() {
             }`}
             onClick={() => HandleClickofheadsent()}
           >
-            Sent
+            Received Requests
           </button>
         </div>
       </footer>
@@ -71,16 +164,21 @@ export default function InvitesPage() {
           className="flex flex-col w-full overflow-y-scroll "
           id="conversation"
         >
-         
-          {filteredConversationsList.map((conversation, index) => {
-            return (
-              <InviteList
-                key={index}
-                isFirstConversation={index == 0}
-                data={conversation}
-                isSent={false}
-              />
-            );
+          {invites.map((invite, index) => {
+            const { name, userEmail, avatarUrl, issent } = invite;
+            console.log("name: "+name+"email: "+userEmail+"avatarUrl: "+avatarUrl+"isSent: "+issent);
+            if (issent) {
+              return (
+                <InviteComp
+                  key={index}
+                  isFirstConversation={index == 0}
+                  userName={name}
+                  useremail={userEmail}
+                  avatarUrl={avatarUrl}
+                  isSent={issent}
+                />
+              );
+            }
           })}
         </div>
       )}
@@ -90,16 +188,20 @@ export default function InvitesPage() {
           className="flex flex-col w-full overflow-y-scroll "
           id="conversation"
         >
-      
-          {filteredConversationsList.map((conversation, index) => {
-            return (
-              <InviteList
+          {invitesReceived.map((invite, index) => {
+            const {name, userEmail, avatarUrl, issent } = invite;
+            if (!issent) {
+              return (
+                <InviteComp
                 key={index}
                 isFirstConversation={index == 0}
-                data={conversation}
-                isSent={true}
-              />
-            );
+                userName={name}
+                useremail={userEmail}
+                avatarUrl={avatarUrl}
+                isSent={issent}
+                />
+              );
+            }
           })}
         </div>
       )}

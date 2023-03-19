@@ -8,7 +8,52 @@ export default function ConversationDetails() {
   const { conversation, message, setMessage } = useContext(ConversationContext);
   const { contactName, image, messageHistory } = conversation;
   const [ messageSend, setMessageSend ] = useState("");
+  const [convos,setConvos]=useState([]);
 
+
+
+  useEffect(() => {
+    const fetchConversationDetails = async () => {
+      const email = "friend@example.com";
+      const url = `http://localhost:8080/api/message/${email}/block-count`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Fetch messages in reverse order of blocks
+        const messages = [];
+        for (let i = data.totalBlocks; i >= 1; i--) {
+          const blockUrl = `http://localhost:8080/api/message/${email}/block/${i}`;
+          const blockResponse = await fetch(blockUrl);
+          if (!blockResponse.ok) {
+            throw new Error(`HTTP error! status: ${blockResponse.status}`);
+          }
+          const blockData = await blockResponse.json();
+
+          blockData.forEach((messageData) => {
+            messages.push({
+              blockIndex: i,
+              messageIndex: messageData.messageIndex,
+              author: messageData.author,
+              message: messageData.message,
+              date: new Date(messageData.date),
+            });
+          });
+        }
+        console.log(messages);
+        setConvos(messages);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchConversationDetails();
+  }, []);
+ 
   useEffect( () => {
     setMessage(messageHistory);
   }, [conversation]);
@@ -49,13 +94,22 @@ export default function ConversationDetails() {
       
       <div className="flex flex-col w-full h-full px-24 py-6 overflow-y-auto" style={{ backgroundImage: "url('/assets/images/background.jpg')" }}>
         {
-          message.map( ( messageConversation, index ) => {
-            const { me, message } = messageConversation;
 
-            return (
-              <MessageBalloon key={index} me={me} message={message} />
-            )
-          } )
+        convos.map( ( conv, index ) => {
+          const { me, message } = conv;
+
+          return (
+            <MessageBalloon key={index} me={me} message={message} />
+          )
+        } )
+
+          // message.map( ( messageConversation, index ) => {
+          //   const { me, message } = messageConversation;
+
+          //   return (
+          //     <MessageBalloon key={index} me={me} message={message} />
+          //   )
+          // } )
         }
       </div> 
      
@@ -71,7 +125,7 @@ export default function ConversationDetails() {
           </svg>
         </div>
         <div className="flex w-[85%] h-12 ml-3">
-          <input type={"text"} className="bg-[#2a3942] rounded-lg w-full px-3 py-3 text-white" placeholder="Start typing.." onKeyDown={(evt) => changeHandler(evt) } onChange={ (evt) => setMessageSend(evt.target.value) } value={messageSend} />
+          <input type={"text"} className="bg-[#2a3942] rounded-lg w-full px-3 py-3 text-white" placeholder="Start typing.. " onKeyDown={(evt) => changeHandler(evt) } onChange={ (evt) => setMessageSend(evt.target.value) } value={messageSend} />
         </div>
         <div className="flex justify-center items-center w-[5%] h-12">
           <svg viewBox="0 0 24 24" width="24" height="24" className="cursor-pointer">

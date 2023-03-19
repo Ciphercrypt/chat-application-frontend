@@ -12,11 +12,63 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+const jwt = require("jsonwebtoken");
 import AvatarChooser from "./avatarchooser"; // import the AvatarChooser component
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+
+import { json } from "stream/consumers";
+import { LocalAtm } from "@material-ui/icons";
 
 const theme = createTheme();
 
-export default function SignUp() {
+async function sendRegistrationRequest(data: {
+  name: string;
+  email: string;
+  password: string;
+  avatarUrl: string;
+}) {
+  const formData = new FormData();
+  formData.append("email", data.email);
+  formData.append("name", data.name);
+  formData.append("password", data.password);
+
+  formData.append("avatar", data.avatarUrl);
+
+  try {
+    const response = await fetch("http://localhost:8080/api/register", {
+      method: "POST",
+
+      body: formData,
+    });
+
+    console.log(JSON.stringify(response));
+
+    if (!response.ok) {
+      toast.error("Registration failed! may be because email already exists..");
+      console.error("Failed to register");
+    }
+
+    if (response.ok) {
+      toast.success("Registration successful!");
+      toast.success("Redirecting to chats..");
+
+      const { token } = await response.json();
+      const decodedToken = jwt.decode(token);
+      console.log(decodedToken.sub);
+
+      localStorage.setItem("userEmail", decodedToken.sub);
+      localStorage.setItem("token", JSON.stringify(token));
+
+      console.log(decodedToken);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default function SignUp({ isRegistered, setisRegistered }) {
   const [avatarFile, setAvatarFile] = React.useState<File | null>(null); // add state to hold the chosen avatar file
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,19 +77,33 @@ export default function SignUp() {
     }
   }; // add a function to handle changes in the chosen file
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    data.append("avatar", avatarFile as File); // add the avatar file to the form data
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-      avatar: data.get("avatar"), // log the avatar file in the console for testing purposes
-    });
+    data.append(
+      "avatarfile",
+      "https://images.pexels.com/photos/1643457/pexels-photo-1643457.jpeg"
+    ); // add the avatar file to the form data
+
+    try {
+      const response = await sendRegistrationRequest({
+        name: data.get("name") as string,
+        email: data.get("email") as string,
+        password: data.get("password") as string,
+        avatarUrl: data.get("avatarfile") as string,
+      });
+
+      // do something with the token or redirect to another page
+      setisRegistered(true);
+    } catch (error) {
+      console.error(error);
+      // handle the error
+    }
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -87,11 +153,7 @@ export default function SignUp() {
               id="password"
               autoComplete="current-password"
             />
-
-<AvatarChooser onChange={handleAvatarChange} file={avatarFile} />{" "}
-            
-          
-            
+            <AvatarChooser onChange={handleAvatarChange} file={avatarFile} />{" "}
             <Button
               type="submit"
               fullWidth
@@ -101,14 +163,9 @@ export default function SignUp() {
               Sign Up
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/login" variant="body2">
+                  {"Already registered? Sign In"}
                 </Link>
               </Grid>
             </Grid>
