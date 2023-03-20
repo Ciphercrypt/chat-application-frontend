@@ -39,8 +39,6 @@ The following tools were used in building the project:
 
 ---
 
-## 📷 Screenshots
-<img src="./public/assets/images/web-whatsapp.gif" alt="Screenshot "/>
 
 
 
