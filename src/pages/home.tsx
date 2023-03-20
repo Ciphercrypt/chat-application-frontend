@@ -11,6 +11,7 @@ function HomeContent() {
   const [sendinvite, setsendinvite] = useState(false);
   const [homechat, sethomechat] = useState(true);
   const [seeallinvites, setseeallinvites] = useState(false);
+  const [showChat, setShowChat] = useState("");
 
   useEffect(() => {
     if (sendinvite) {
@@ -38,10 +39,13 @@ function HomeContent() {
         <SideBar
           setsendinvite={setsendinvite}
           setseeallinvites={setseeallinvites}
+          setShowChat={setShowChat}
         />
         <div className="flex w-[70%] bg-[#222E35]">
-          {homechat && conversation.contactName ? (
-            <ConversationDetails />
+          {homechat && showChat ? (
+            <ConversationDetails
+            showChat={showChat}
+             />
           ) : (
             homechat && <IconHome />
           )}

@@ -1,20 +1,39 @@
 import { KeyboardEvent, useContext, useEffect, useState } from "react";
 import { ConversationContext } from "../../context/ConversationContext";
-import Avatar from "../Avatar";
+import Avatar from "@mui/material/Avatar";
 import MessageBalloon from "../MessageBalloon";
 import SendInvitePage from "../Invites/sendinvite";
 
-export default function ConversationDetails() {
-  const { conversation, message, setMessage } = useContext(ConversationContext);
-  const { contactName, image, messageHistory } = conversation;
+export default function ConversationDetails({showChat}) {
+ 
   const [ messageSend, setMessageSend ] = useState("");
   const [convos,setConvos]=useState([]);
+  const [contactName, setContactName] = useState("");
+  const  [contactEmail, setContactEmail] = useState("");
+  const [avatarUrl,setAvatarUrl]=useState("");
 
+  const token=localStorage.getItem("token");
+  const userEmail=localStorage.getItem("email");
+  const headers = {
+    Accept: "*/*",
+    Authorization: `Bearer ${token}`,
+    username: userEmail as string,
+  };
 
 
   useEffect(() => {
     const fetchConversationDetails = async () => {
-      const email = "friend@example.com";
+      const email = showChat;
+      console.log("showchat"+showChat);
+      console.log(email);
+      const userData=await await fetch(
+        `http://localhost:8080/api/user/info/${email}`,
+        { headers }
+      );
+      const partnerData=await userData.json();
+      setContactName(partnerData.name);
+      setAvatarUrl(partnerData.avatarUrl);
+      setContactEmail(partnerData.email);
       const url = `http://localhost:8080/api/message/${email}/block-count`;
 
       try {
@@ -54,9 +73,7 @@ export default function ConversationDetails() {
     fetchConversationDetails();
   }, []);
  
-  useEffect( () => {
-    setMessage(messageHistory);
-  }, [conversation]);
+  const [message, setMessage] = useState([]);
 
   function changeHandler(evt: KeyboardEvent<HTMLInputElement>) {
     const { key } = evt;
@@ -75,8 +92,9 @@ export default function ConversationDetails() {
         <div className="flex justify-between bg-[#202c33] w-full h-14">
           
           <div className="flex items-center gap-4 h-full">
-            <Avatar width="w-10" height="h-10" image={image} />
+            <Avatar src={avatarUrl} />
             <h1 className="text-white font-normal">{contactName}</h1>
+            <h5>{contactEmail}</h5>
           </div>
           
           <div className="flex items-center text-[#8696a0] gap-2">
@@ -103,13 +121,7 @@ export default function ConversationDetails() {
           )
         } )
 
-          // message.map( ( messageConversation, index ) => {
-          //   const { me, message } = messageConversation;
-
-          //   return (
-          //     <MessageBalloon key={index} me={me} message={message} />
-          //   )
-          // } )
+         
         }
       </div> 
      

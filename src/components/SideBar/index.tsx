@@ -6,8 +6,9 @@ import ProfilePage from "../FloatingOptions/Profilepage";
 import SearchPeople from "../FloatingOptions/SearchPeople";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
+import AllConversations from "../ConversationList/AllConversations";
 
-export default function SideBar({ setsendinvite, setseeallinvites }) {
+export default function SideBar({ setsendinvite, setseeallinvites,setShowChat }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [avatarImage, setAvatarImage] = useState("");
@@ -24,30 +25,53 @@ export default function SideBar({ setsendinvite, setseeallinvites }) {
       .catch((error) => console.error(error));
   }, []);
 
-  const userEmail = localStorage.getItem("userEmail");
-  const token = localStorage.getItem("token");
-
+  const [friendsList, setFriendsList] = useState([]);
   useEffect(() => {
+    
+const userEmail = localStorage.getItem("userEmail");
+const token = localStorage.getItem("token");
     async function fetchFriends() {
       const headers = {
         Accept: "*/*",
         Authorization: `Bearer ${token}`,
         username: userEmail as string,
       };
-
+  
       const getFriends = await fetch(
         "http://localhost:8080/api/conversation/my-conversation",
-
         { headers }
       );
       const allFriends = await getFriends.json();
-
-      console.log(allFriends);
+  
+      const friendsData = await Promise.all(
+        allFriends.map(async (friend: { email: any; name: any; avatarUrl: any; }) => {
+          const friendEmail = friend.email;
+          const getLastMessage = await fetch(
+            `http://localhost:8080/api/message/${friendEmail}/last-message`,
+            { headers }
+          );
+          const lastMessage = await getLastMessage.json();
+  
+          return {
+            partnerEmail: friend.email,
+            partnerName: friend.name,
+            partnerAvatarUrl: friend.avatarUrl,
+            lastMessage: lastMessage.content,
+            lastMessageDate: lastMessage.date,
+            me: lastMessage.author === userEmail,
+          };
+        })
+      );
+      console.log("1");
+      setFriendsList(friendsData);
+      console.log(friendsData);
+      console.log(friendsList);
+      console.log("2");
+     
     }
-
+  
     fetchFriends();
-  }, [userEmail, token]);
-
+  }, []);
   const conversationsList = conversations.conversation_list;
   const [search, setSearch] = useState("");
   const filteredConversationsList =
@@ -110,69 +134,9 @@ export default function SideBar({ setsendinvite, setseeallinvites }) {
     setshowaddPeople(!showaddPeople);
   }
 
-  const [chatData, setChatData] = useState([]);
-  const [currentUser, setCurrentUser] = useState("");
 
-  useEffect(() => {
-    setCurrentUser("Hreshi");
-    // Make a GET request to the first API
-    axios
-      .get("localhost:8080/friend/all", {
-        headers: {
-          Authorization: currentUser,
-        },
-      })
-      .then((res) => {
-        const friendList = res.data;
 
-        // Loop through the friend list
-        friendList.forEach(async (friend: { friend: any }) => {
-          const friendName = friend.friend;
-          // Make a GET request to the second API
-          const response = await axios.get(
-            `localhost:8080/text/${friendName}`,
-            {
-              headers: {
-                Authorization: currentUser,
-              },
-            }
-          );
-          const messageHistory = response.data;
-
-          // // Make a GET request to the third API
-          // const avatarResponse = await axios.get('localhost:8080/user/data', {
-          //   headers: {
-          //     Authorization: friendName
-          //   }
-          // });
-          const avatar = "avatar.jpg";
-
-          // Format the data as described
-          const formattedData = {
-            contactName: friendName,
-            lastMessage: messageHistory[messageHistory.length - 1].message,
-            image: avatar,
-            lastTime: "19:15",
-            messageHistory: messageHistory.map(
-              (message: { sender: string; message: any }) => {
-                return {
-                  me: message.sender === currentUser,
-                  message: message.message,
-                };
-              }
-            ),
-          };
-
-          // Add the formatted data to the chatData state
-          setChatData((prevChatData) => [...prevChatData, formattedData]);
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, [currentUser]);
-
-  if (chatData !== filteredConversationsList) console.log("aakanksha ");
+ 
 
   return (
     <div
@@ -295,15 +259,37 @@ export default function SideBar({ setsendinvite, setseeallinvites }) {
           );
         })} */}
 
-        {filteredConversationsList.map((conversation, index) => {
+        {
+          friendsList.map((conversation, index) => {
+            return (
+              <AllConversations
+                key={index}
+                isFirstConversation={index == 0}
+               partnerEmail={conversation.partnerEmail}
+               partnerName={conversation.partnerName}
+                partnerAvatar={conversation.partnerAvatar}
+                lastMessage={conversation.lastMessage}
+                lastMessageDate={conversation.lastMessageDate}
+                avatarUrl={conversation.avatarUrl}
+                me={conversation.me}
+                setShowChat={setShowChat}
+              />
+            );
+          })
+        }
+
+        {/* {filteredConversationsList.map((conversation, index) => {
           return (
             <ConversationList
               key={index}
               isFirstConversation={index == 0}
               data={conversation}
+              conversationEmail={}
             />
+
+            
           );
-        })}
+        })} */}
       </div>
     </div>
   );

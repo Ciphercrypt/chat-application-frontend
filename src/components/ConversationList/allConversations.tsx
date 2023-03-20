@@ -1,23 +1,31 @@
 import { useContext, useState } from "react";
 import { ConversationContext } from "../../context/ConversationContext";
-import Avatar from "../Avatar";
 import { ConversationListData } from "../../types/Conversation"
 import SendInvitePage from "../Invites/sendinvite";
+import Avatar from "@mui/material/Avatar";
 
 interface ConversationListProps {
-  isFirstConversation?: boolean;
-  data: ConversationListData
+isFirstConversation: boolean;
+partnerEmail: string;
+partnerName: string;
+partnerAvatar: string;
+lastMessage: string;
+lastMessageDate: string;
+avatarUrl: string;
+me:boolean;
+setShowChat: (value: string) => void;
+
 }
 
-export default function allConversations(props: ConversationListProps) {
-  const { isFirstConversation, data } = props;
-  const { setConversation } = useContext(ConversationContext);
-  const { contactName, lastMessage, lastTime, image } = data;
+export default function AllConversations(props: ConversationListProps) {
+  const { isFirstConversation,partnerEmail,partnerName,lastMessage,lastMessageDate,avatarUrl,setShowChat } = props;
+
   const borderHeight = isFirstConversation ? "0px" : "1px"
   const [ isHover, seHover ] = useState(false);
 
   const handleClickonConversation = () => {
-    sessionStorage.setItem("currentChat", JSON.stringify(data));
+    setShowChat(partnerEmail);
+    sessionStorage.setItem("currentChat", partnerEmail);
   };
 
   return (
@@ -25,20 +33,20 @@ export default function allConversations(props: ConversationListProps) {
       className="flex items-center w-full h-[4.5rem] bg-[#111B21] pl-3 pr-4 hover:bg-[#2A3942] cursor-pointer"
       onMouseMove={ () => seHover(true) }
       onMouseLeave={ () => seHover(false) }
-      onClick={ () => setConversation(data) }
+      onClick={ () => handleClickonConversation() }
     >
       <div className="flex w-[4.8rem]">
-        <Avatar  width="w-12" height="h-12" image={image} />
+        <Avatar   src={avatarUrl} />
       </div>
       <div className="flex flex-col w-full">
         <hr style={{borderTop: `${borderHeight} solid rgba(134,150,160,0.15)`}} />
         <div className="flex py-2">
           <div className="flex flex-col w-full h-full ">
-            <span className="overflow-y-hidden text-ellipsis text-white text-base">{contactName}</span>
-            <span className="overflow-y-hidden text-ellipsis text-[#aebac1] text-sm">{lastMessage}</span>
+            <span className="overflow-y-hidden text-ellipsis text-white text-base">{partnerName}</span>
+            <span className="overflow-y-hidden text-ellipsis text-[#aebac1] text-sm">{partnerEmail}</span>
           </div>
           <div className="flex flex-col w-auto text-[#aebac1]">
-            <h1 className="text-xs">{lastTime}</h1>
+            <h1 className="text-xs">{lastMessageDate}</h1>
             {
               isHover ? (
                 <span className="flex cursor-pointer h-full items-center justify-center">

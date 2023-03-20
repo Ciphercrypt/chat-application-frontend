@@ -73,7 +73,7 @@ export default function SendInvitePage() {
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <button className="bg-indigo-500 text-white p-2 rounded-lg hover:bg-indigo-600 w-full">Search</button>
+        <button className="bg-green-500 text-white p-2 rounded-lg hover:bg-indigo-600 w-full">Submit</button>
       </form>
 
       <footer className="flex items-center bg-[#202c33] w-full h-16 py-3 text-[#8696a0]"></footer>
