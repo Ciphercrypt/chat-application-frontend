@@ -20,7 +20,7 @@ $ cd chat-application-frontend
 $ npm install
 
 # Run  the application in development mode
-$ npm run start
+$ npm run dev
 
 # The application will open in port:3000 - go to http://localhost:3000
 
