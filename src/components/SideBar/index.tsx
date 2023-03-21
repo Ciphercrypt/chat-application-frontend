@@ -8,68 +8,74 @@ import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import AllConversations from "../ConversationList/AllConversations";
 
-export default function SideBar({ setsendinvite, setseeallinvites,setShowChat }) {
+export default function SideBar({
+  setsendinvite,
+  setseeallinvites,
+  setShowChat,
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [avatarImage, setAvatarImage] = useState("");
-  useEffect(() => {
-    // Fetch user info from the API using the email stored in localStorage
-    const userEmail = localStorage.getItem("userEmail");
-    fetch(`http://localhost:8080/api/user/info/${userEmail}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setName(data.name);
-        setEmail(data.email);
-        setAvatarImage(data.avatarUrl);
-      })
-      .catch((error) => console.error(error));
-  }, []);
+      useEffect(() => {
+        // Fetch user info from the API using the email stored in localStorage
+        const userEmail = localStorage.getItem("userEmail");
+        fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setName(data.name);
+            setEmail(data.email);
+            setAvatarImage(data.avatarUrl);
+          })
+          .catch((error) => console.error(error));
+      }, []);
+    
 
+  
   const [friendsList, setFriendsList] = useState([]);
   useEffect(() => {
-    
-const userEmail = localStorage.getItem("userEmail");
-const token = localStorage.getItem("token");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
     async function fetchFriends() {
       const headers = {
         Accept: "*/*",
         Authorization: `Bearer ${token}`,
         username: userEmail as string,
       };
-  
+
       const getFriends = await fetch(
         "http://localhost:8080/api/conversation/my-conversation",
         { headers }
       );
       const allFriends = await getFriends.json();
-  
+
       const friendsData = await Promise.all(
-        allFriends.map(async (friend: { email: any; name: any; avatarUrl: any; }) => {
-          const friendEmail = friend.email;
-          const getLastMessage = await fetch(
-            `http://localhost:8080/api/message/${friendEmail}/last-message`,
-            { headers }
-          );
-          const lastMessage = await getLastMessage.json();
-  
-          return {
-            partnerEmail: friend.email,
-            partnerName: friend.name,
-            partnerAvatarUrl: friend.avatarUrl,
-            lastMessage: lastMessage.content,
-            lastMessageDate: lastMessage.date,
-            me: lastMessage.author === userEmail,
-          };
-        })
+        allFriends.map(
+          async (friend: { email: any; name: any; avatarUrl: any }) => {
+            const friendEmail = friend.email;
+            const getLastMessage = await fetch(
+              `http://localhost:8080/api/message/${friendEmail}/last-message`,
+              { headers }
+            );
+            const lastMessage = await getLastMessage.json();
+
+            return {
+              partnerEmail: friend.email,
+              partnerName: friend.name,
+              partnerAvatarUrl: friend.avatarUrl,
+              lastMessage: lastMessage.content,
+              lastMessageDate: lastMessage.date,
+              me: lastMessage.author === userEmail,
+            };
+          }
+        )
       );
       console.log("1");
       setFriendsList(friendsData);
       console.log(friendsData);
       console.log(friendsList);
       console.log("2");
-     
     }
-  
+
     fetchFriends();
   }, []);
   const conversationsList = conversations.conversation_list;
@@ -133,10 +139,6 @@ const token = localStorage.getItem("token");
     }
     setshowaddPeople(!showaddPeople);
   }
-
-
-
- 
 
   return (
     <div
@@ -259,24 +261,22 @@ const token = localStorage.getItem("token");
           );
         })} */}
 
-        {
-          friendsList.map((conversation, index) => {
-            return (
-              <AllConversations
-                key={index}
-                isFirstConversation={index == 0}
-               partnerEmail={conversation.partnerEmail}
-               partnerName={conversation.partnerName}
-                partnerAvatar={conversation.partnerAvatar}
-                lastMessage={conversation.lastMessage}
-                lastMessageDate={conversation.lastMessageDate}
-                avatarUrl={conversation.avatarUrl}
-                me={conversation.me}
-                setShowChat={setShowChat}
-              />
-            );
-          })
-        }
+        {friendsList.map((conversation, index) => {
+          return (
+            <AllConversations
+              key={index}
+              isFirstConversation={index == 0}
+              partnerEmail={conversation.partnerEmail}
+              partnerName={conversation.partnerName}
+              partnerAvatar={conversation.partnerAvatar}
+              lastMessage={conversation.lastMessage}
+              lastMessageDate={conversation.lastMessageDate}
+              avatarUrl={conversation.avatarUrl}
+              me={conversation.me}
+              setShowChat={setShowChat}
+            />
+          );
+        })}
 
         {/* {filteredConversationsList.map((conversation, index) => {
           return (

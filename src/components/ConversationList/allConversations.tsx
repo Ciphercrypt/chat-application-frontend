@@ -24,7 +24,9 @@ export default function AllConversations(props: ConversationListProps) {
   const [ isHover, seHover ] = useState(false);
 
   const handleClickonConversation = () => {
+    console.log("click on conversation"+partnerEmail);
     setShowChat(partnerEmail);
+    
     sessionStorage.setItem("currentChat", partnerEmail);
   };
 

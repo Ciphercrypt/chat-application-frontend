@@ -16,22 +16,25 @@ function HomeContent() {
   useEffect(() => {
     if (sendinvite) {
       sethomechat(false);
+      setseeallinvites(false);
     }
   }, [sendinvite]);
 
   useEffect(() => {
     if (seeallinvites) {
       sethomechat(false);
+      setsendinvite(false);
     }
   }, [seeallinvites]);
 
   useEffect(() => {
-    if (conversation.contactName) {
+    console.log("showChatinHome" + showChat);
+    if (showChat) {
       sethomechat(true);
       setseeallinvites(false);
       setsendinvite(false);
     }
-  }, [conversation.contactName]);
+  }, [showChat]);
 
   return (
     <div className="flex justify-center" id="Home">
