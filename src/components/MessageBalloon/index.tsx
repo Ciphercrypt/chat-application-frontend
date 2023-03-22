@@ -3,24 +3,26 @@ import { useEffect, useState } from "react";
 interface MessageBalloonProps {
   me: boolean;
   message: string;
+  date:Date;
 }
 
 export default function MessageBalloon(props: MessageBalloonProps) {
   const [time, setTime] = useState("");
-  const { me, message } = props;
+  //const [date,setDate]=useState(new Date());
+  const { me, message ,date} = props;
+
+  
+ // const date = new Date(datestring);
+
+
+
   const flexAlignItems = me ? "items-end" : "items-start";
   const backgroundColor = me ? "bg-[#005c4b]" : "bg-[#202c33]";
   const borderRounded = me ? "rounded-tr-none" : "rounded-tl-none";
 
-  useEffect(() => {
-    setTime(refreshTime());
-  }, [])
+  
 
-  function refreshTime() {
-    const date = new Date();
-    const formattedString = date.getHours() + ":" + date.getMinutes();
-    return formattedString;
-  }
+ 
 
   return (
     <div className={`flex flex-col ${flexAlignItems} w-full h-max`}>
@@ -29,7 +31,7 @@ export default function MessageBalloon(props: MessageBalloonProps) {
           <span>{message}</span>
         </div>
         <div className="flex justify-end text-[hsla(0,0%,100%,0.6)] text-xs mt-1">
-          <span>{time}</span>
+          <span>{new Date(date).toString()}</span>
         </div>
       </div>
     </div>

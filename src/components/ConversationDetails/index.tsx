@@ -5,18 +5,16 @@ import MessageBalloon from "../MessageBalloon";
 import SendInvitePage from "../Invites/sendinvite";
 import Chat from "./Chat";
 
-import * as SockJS from "sockjs-client";
+import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
 export default function ConversationDetails({ showChat }) {
-  console.log("conversationdetails");
-  console.log("conversationdetails" + showChat);
   const [messageSend, setMessageSend] = useState("");
   const [convos, setConvos] = useState([]);
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  // const [stompClient, setStompClient] = useState(null);
+  const [stompClient1, setStompClient1] = useState(null);
   const [subscription, setSubscription] = useState(null);
 
   const token = localStorage.getItem("token");
@@ -25,17 +23,18 @@ export default function ConversationDetails({ showChat }) {
     Accept: "*/*",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    "Content-type": "application/json",
     Authorization: `Bearer ${token}`,
     username: userEmail as string,
   };
 
   useEffect(() => {
+    setConvos([]);
     const fetchConversationDetails = async () => {
-      console.log("conversationdetails in fetchCOnvofunction" + showChat);
       const email = showChat;
-      console.log("showchat" + showChat);
-      console.log("conversationdetails" + email);
-      const userData =  await fetch(
+
+      console.log("does it come here");
+      const userData = await fetch(
         `http://localhost:8080/api/user/info/${email}`,
         { headers }
       );
@@ -45,37 +44,54 @@ export default function ConversationDetails({ showChat }) {
       setContactEmail(partnerData.email);
       const url = `http://localhost:8080/api/message/${email}/block-count`;
 
+      console.log("does it come here2");
       try {
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("data" + JSON.stringify(data));
 
         // Fetch messages in reverse order of blocks
-        const messages = [];
-        for (let i = data.totalBlocks; i >= 1; i--) {
-          const blockUrl = `http://localhost:8080/api/message/${email}/block/${i}`;
-          const blockResponse = await fetch(blockUrl);
-          if (!blockResponse.ok) {
-            throw new Error(`HTTP error! status: ${blockResponse.status}`);
-          }
-          const blockData = await blockResponse.json();
-          console.log("blockdata" + JSON.stringify(blockData.totalBlocks));
+        console.log("does it come here3" + JSON.stringify(data));
 
+        const messages = [];
+        for (let i = data; i >= 1; i--) {
+          const blockUrl = `http://localhost:8080/api/message/${showChat}/block/${i}`;
+          //  console.log(blockUrl);
+          const blockResponse1 = await fetch(blockUrl, { headers });
+          //  console.log(blockResponse1.body);
+
+          const blockResponse = await blockResponse1.json();
+
+          const parsedMessage = JSON.parse(JSON.stringify(blockResponse));
+          if (!blockResponse1.ok) {
+            throw new Error(`HTTP error! avi: ${blockResponse1.status}`);
+          }
+          console.log("does it come here45");
+          const blockData = JSON.parse(
+            JSON.stringify(parsedMessage.messageList)
+          );
+
+         // console.log("parsedmessage=" + JSON.stringify(blockData));
+          console.log("here it is");
+          console.log(blockData);
           blockData.forEach((messageData) => {
+            const jsonObject = JSON.parse(messageData.content);
+
+            console.log("jsonObject=" + jsonObject.content.message);
+            if(jsonObject.content.message!=""){
             messages.push({
-              blockIndex: i,
-              messageIndex: messageData.messageIndex,
-              author: messageData.author,
-              message: messageData.message,
-              date: new Date(messageData.date),
+              me: messageData.author===userEmail?1:0,
+              author: jsonObject.content.author,
+              message: jsonObject.content.message,
+              //date: new Date(jsonObject.content.date),
             });
+          }
           });
+        
         }
-        console.log(messages);
-        setConvos(messages);
+        setConvos((convos) => convos.concat(messages));
       } catch (error) {
         console.error(error);
       }
@@ -86,71 +102,71 @@ export default function ConversationDetails({ showChat }) {
 
   const [message, setMessage] = useState([]);
 
-  console.log("hey");
-
-
-
-
   const jwtToken = token?.replace(/['"]+/g, "");
 
   useEffect(() => {
-    const sock = new SockJS("http://localhost:8080/ws?token=" + jwtToken);
+    const sock = new SockJS("http://localhost:8080/api/ws?token=" + jwtToken);
     const stompClient = Stomp.over(sock);
 
     stompClient.connect({}, () => {
       console.log("Connected to WebSocket");
-      stompClient.subscribe(`http:8080/localhost/messages/${userEmail}`, (message) => {
+      stompClient.subscribe(`/messages/${userEmail}`, (message) => {
         console.log("Received message: " + message.body);
+        const parsedMessage = JSON.parse(message.body);
+        const parsedContent = JSON.parse(parsedMessage.content);
+        const author = parsedContent.content.author;
+        const messageText = parsedContent.content.message;
+
+        
+        //const dt = new Date(parsedContent.content.date);
+
+        if(messageText!=""){
+        const teste = {
+          me: false,
+          author: author,
+          message: messageText,
+          date: parsedContent.content.date,
+        };
+      
+        console.log("teste: " + JSON.stringify(teste));
+        setConvos((convos) => convos.concat(teste));
+      }
       });
     });
-
+    setStompClient1(stompClient);
     return () => {
       stompClient.disconnect();
     };
-  }, [jwtToken, userEmail, showChat]);
-
-  // const sock = new SockJS(`http://localhost:8080/api/ws?token=${jwtToken}`);
-
-  // console.log("sock" + JSON.stringify(sock));
-
-  // const stompClient = Stomp.over(sock);
-
-  // console.dir("stompclient" + stompClient);
-  // sock.onopen = function () {
-  //   console.log("open");
-  // };
-  // stompClient.connect({headers}, function (frame) {
-  //   console.log("Connected: " + frame);
-  //   stompClient.subscribe(
-  //     `/messages/${userEmail}`,
-  //     function (message) {
-  //       if (message.body) {
-  //         console.log(message.body);
-  //       } else {
-  //         console.log(message);
-  //       }
-  //     }
-  //   );
-  // });
+  }, [userEmail, jwtToken]);
 
   function changeHandler(evt: KeyboardEvent<HTMLInputElement>) {
     const { key } = evt;
 
-    if (key === "Enter") {
-      const teste = { me: true, message: messageSend };
-      setMessage([...message, teste]);
+    if (key === "Enter" && messageSend!="") {
+      console.log("entered message:" + messageSend);
+      const teste = {
+        me: true,
+        author: userEmail,
+        message: messageSend,
+        date: new Date(),
+      };
+      setConvos((convos) => convos.concat(teste));
+      stompClient1.send(
+        `/ms/send/${showChat}`,
+        {},
+        JSON.stringify({ content: teste })
+      );
+
       setMessageSend("");
     }
   }
 
+
+
+  console.log("final output: "+convos);
   return (
     <>
-      {/* <Chat
-    avatarUrl={avatarUrl}
-    contactName={contactName}
-    contactEmail={contactEmail}
-    convos={convos}
-    /> */}
+      
 
       <div className="flex flex-col w-full">
         <div className="flex justify-between w-full px-4">
@@ -193,9 +209,10 @@ export default function ConversationDetails({ showChat }) {
           style={{ backgroundImage: "url('/assets/images/background.jpg')" }}
         >
           {convos.map((conv, index) => {
-            const { me, message } = conv;
 
-            return <MessageBalloon key={index} me={me} message={message} />;
+            const { me, message,date } = conv
+
+            return <MessageBalloon key={index} me={me} message={message} date={date} />;
           })}
         </div>
 

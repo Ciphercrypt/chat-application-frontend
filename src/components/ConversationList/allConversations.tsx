@@ -6,6 +6,7 @@ import Avatar from "@mui/material/Avatar";
 
 interface ConversationListProps {
 isFirstConversation: boolean;
+myName: string;
 partnerEmail: string;
 partnerName: string;
 partnerAvatar: string;
@@ -18,7 +19,7 @@ setShowChat: (value: string) => void;
 }
 
 export default function AllConversations(props: ConversationListProps) {
-  const { isFirstConversation,partnerEmail,partnerName,lastMessage,lastMessageDate,avatarUrl,setShowChat } = props;
+  const { isFirstConversation,myName,partnerEmail,partnerName,lastMessage,lastMessageDate,avatarUrl,me,setShowChat } = props;
 
   const borderHeight = isFirstConversation ? "0px" : "1px"
   const [ isHover, seHover ] = useState(false);
@@ -44,9 +45,10 @@ export default function AllConversations(props: ConversationListProps) {
         <hr style={{borderTop: `${borderHeight} solid rgba(134,150,160,0.15)`}} />
         <div className="flex py-2">
           <div className="flex flex-col w-full h-full ">
-            <span className="overflow-y-hidden text-ellipsis text-white text-base">{partnerName}</span>
-            <span className="overflow-y-hidden text-ellipsis text-[#aebac1] text-sm">{partnerEmail}</span>
-          </div>
+            <span className="overflow-y-hidden text-ellipsis text-white text-base">{partnerName}.{partnerEmail}</span>
+            <span className="overflow-y-hidden text-ellipsis text-[#aebac1] text-sm">
+  {me ? `${myName} : ${lastMessage}` : `${partnerName} : ${lastMessage}`}
+</span>          </div>
           <div className="flex flex-col w-auto text-[#aebac1]">
             <h1 className="text-xs">{lastMessageDate}</h1>
             {

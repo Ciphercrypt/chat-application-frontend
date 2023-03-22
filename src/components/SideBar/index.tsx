@@ -16,21 +16,19 @@ export default function SideBar({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [avatarImage, setAvatarImage] = useState("");
-      useEffect(() => {
-        // Fetch user info from the API using the email stored in localStorage
-        const userEmail = localStorage.getItem("userEmail");
-        fetch(`http://localhost:8080/api/user/info/${userEmail}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setName(data.name);
-            setEmail(data.email);
-            setAvatarImage(data.avatarUrl);
-          })
-          .catch((error) => console.error(error));
-      }, []);
-    
+  useEffect(() => {
+    // Fetch user info from the API using the email stored in localStorage
+    const userEmail = localStorage.getItem("userEmail");
+    fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setName(data.name);
+        setEmail(data.email);
+        setAvatarImage(data.avatarUrl);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
-  
   const [friendsList, setFriendsList] = useState([]);
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
@@ -56,15 +54,40 @@ export default function SideBar({
               `http://localhost:8080/api/message/${friendEmail}/last-message`,
               { headers }
             );
-            const lastMessage = await getLastMessage.json();
 
+            const LastMessage1= await getLastMessage.json();
+            const obj = Object.entries(LastMessage1)
+
+
+           const LastMessage = JSON.parse(JSON.stringify(LastMessage1));
+           // const =JSON.parse(LastMessage1);
+
+          //  if(getLastMessage.status==200){ console.log(
+          //     "lastMessage of " +
+          //       friendEmail +
+          //       " => " +
+          //       LastMessage
+          //   );
+          //  }
+            let lastMessageIndex = -1;
+            let lastMessageContent = '';
+            if (getLastMessage.ok && Array.isArray(LastMessage.content) && LastMessage.content.length > 0) {
+              const lastContent = LastMessage.content[LastMessage.content.length - 1];
+              console.log("lastcontent="+lastContent);
+              const content = lastContent.content || [];
+              lastMessageContent = content.length > 0 ? content[content.length - 1].message : '';
+            }
+            
             return {
+              myName: name,
               partnerEmail: friend.email,
               partnerName: friend.name,
               partnerAvatarUrl: friend.avatarUrl,
-              lastMessage: lastMessage.content,
-              lastMessageDate: lastMessage.date,
-              me: lastMessage.author === userEmail,
+              LastMessage: lastMessageContent,
+              lastMessageDate: getLastMessage.ok
+                ? LastMessage?.date || null
+                : null,
+              me: getLastMessage.ok ? LastMessage?.author === userEmail : false,
             };
           }
         )
@@ -266,6 +289,7 @@ export default function SideBar({
             <AllConversations
               key={index}
               isFirstConversation={index == 0}
+              myName={conversation.myName}
               partnerEmail={conversation.partnerEmail}
               partnerName={conversation.partnerName}
               partnerAvatar={conversation.partnerAvatar}
