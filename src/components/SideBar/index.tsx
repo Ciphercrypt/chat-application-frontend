@@ -83,14 +83,14 @@ export default function SideBar({
             { headers }
           );
 
-          const LastMessage1 = await getLastMessage.json();
-
-          console.log(LastMessage1);
-
-          const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
-          if (LastMessage1.ok) {
+         
+          if (getLastMessage.ok) {
            
+            const LastMessage1 = await getLastMessage.json();
 
+            console.log(LastMessage1);
+  
+            const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
             console.log("does it come here45");
             const blockData = JSON.parse(JSON.stringify(parsedMessage.content));
             console.log(friendEmail + "blockdata=" + blockData);
@@ -144,7 +144,7 @@ export default function SideBar({
           return {
 
            
-             myName: name,
+             myName: Name,
               partnerEmail: friend.email,
               partnerName: friend.name,
               partnerAvatarUrl: friend.avatarUrl,
