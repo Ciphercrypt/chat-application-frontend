@@ -15,10 +15,12 @@ export default function SideBar({
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [lastM,setLastM]=useState([{me:false,message:"Click to Chat.."}]);
   const [avatarImage, setAvatarImage] = useState("");
   useEffect(() => {
     // Fetch user info from the API using the email stored in localStorage
     const userEmail = localStorage.getItem("userEmail");
+
     fetch(`http://localhost:8080/api/user/info/${userEmail}`)
       .then((response) => response.json())
       .then((data) => {
@@ -46,9 +48,11 @@ export default function SideBar({
       );
       const allFriends = await getFriends.json();
 
+
       const friendsData = await Promise.all(
         allFriends.map(
-          async (friend: { email: any; name: any; avatarUrl: any }) => {
+          async (friend) => {
+            console.log(friend.email);
             const friendEmail = friend.email;
             const getLastMessage = await fetch(
               `http://localhost:8080/api/message/${friendEmail}/last-message`,
@@ -56,7 +60,28 @@ export default function SideBar({
             );
 
             const LastMessage1= await getLastMessage.json();
-            const obj = Object.entries(LastMessage1)
+              console.log(LastMessage1);
+
+
+              
+
+          const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
+          if (!LastMessage1.ok) {
+           console.error(`HTTP error! avi: ${LastMessage1.status}`);
+          }
+          console.log("does it come here45");
+          const blockData = JSON.parse(
+            JSON.stringify(parsedMessage.content)
+          );
+            console.log(friendEmail+"blockdata="+blockData);
+
+            
+            if (blockData.content && blockData.content.message) {
+              const message = blockData.content.message;
+              console.log("jsonObject=" + message);
+            } else {
+              console.log("Invalid message format");
+            }
 
 
            const LastMessage = JSON.parse(JSON.stringify(LastMessage1));

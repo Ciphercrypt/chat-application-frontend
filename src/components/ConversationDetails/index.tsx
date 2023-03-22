@@ -56,7 +56,7 @@ export default function ConversationDetails({ showChat }) {
         console.log("does it come here3" + JSON.stringify(data));
 
         const messages = [];
-        for (let i = data; i >= 1; i--) {
+        for (let i = 1; i <= data; i++) {
           const blockUrl = `http://localhost:8080/api/message/${showChat}/block/${i}`;
           //  console.log(blockUrl);
           const blockResponse1 = await fetch(blockUrl, { headers });
@@ -85,13 +85,16 @@ export default function ConversationDetails({ showChat }) {
               me: messageData.author===userEmail?1:0,
               author: jsonObject.content.author,
               message: jsonObject.content.message,
-              //date: new Date(jsonObject.content.date),
+              date: new Date(jsonObject.content.date),
             });
           }
           });
         
         }
-        setConvos((convos) => convos.concat(messages));
+
+
+        
+        setConvos([...messages]);
       } catch (error) {
         console.error(error);
       }
@@ -163,7 +166,7 @@ export default function ConversationDetails({ showChat }) {
 
 
 
-  console.log("final output: "+convos);
+  
   return (
     <>
       
@@ -210,8 +213,10 @@ export default function ConversationDetails({ showChat }) {
         >
           {convos.map((conv, index) => {
 
-            const { me, message,date } = conv
+            const { me, message,date } = conv;
+            console.log("date=" + date);
 
+            if(message!="")
             return <MessageBalloon key={index} me={me} message={message} date={date} />;
           })}
         </div>
