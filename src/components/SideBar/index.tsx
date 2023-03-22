@@ -74,89 +74,73 @@ export default function SideBar({
 
       console.log("friendlist=" + JSON.stringify(allFriends));
 
-      const friendsData = await Promise.all(
-        allFriends.map(async (friend) => {
-          console.log(friend.email);
-          const friendEmail = friend.email;
-          const getLastMessage = await fetch(
-            `http://localhost:8080/api/message/${friendEmail}/last-message`,
-            { headers }
-          );
+      // const friendsData = await Promise.all(
+      //   allFriends.map(async (friend) => {
+      //     console.log(friend.email);
+      //     const friendEmail = friend.email;
+      //     const getLastMessage = await fetch(
+      //       `http://localhost:8080/api/message/${friendEmail}/last-message`,
+      //       { headers }
+      //     );
 
          
-          if (getLastMessage.ok) {
+      //     if (getLastMessage.ok) {
            
-            const LastMessage1 = await getLastMessage.json();
+      //       const LastMessage1 = await getLastMessage.json();
 
-            console.log(LastMessage1);
+      //       console.log(LastMessage1);
   
-            const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
-            console.log("does it come here45");
-            const blockData = JSON.parse(JSON.stringify(parsedMessage.content));
-            console.log(friendEmail + "blockdata=" + blockData);
+      //       const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
+      //       console.log("does it come here45");
+      //       const blockData = JSON.parse(JSON.stringify(parsedMessage.content));
+      //       console.log(friendEmail + "blockdata=" + blockData);
 
-            if (blockData.content && blockData.content.message) {
-              const message = blockData.content.message;
-              console.log("jsonObject=" + message);
-            } else {
-              console.log("Invalid message format");
-            }
+      //       if (blockData.content && blockData.content.message) {
+      //         const message = blockData.content.message;
+      //         console.log("jsonObject=" + message);
+      //       } else {
+      //         console.log("Invalid message format");
+      //       }
 
-            const LastMessage = JSON.parse(JSON.stringify(LastMessage1));
-            // const =JSON.parse(LastMessage1);
+      //       const LastMessage = JSON.parse(JSON.stringify(LastMessage1));
+      //       // const =JSON.parse(LastMessage1);
 
-            //  if(getLastMessage.status==200){ console.log(
-            //     "lastMessage of " +
-            //       friendEmail +
-            //       " => " +
-            //       LastMessage
-            //   );
-            //  }
-            let lastMessageIndex = -1;
-            let lastMessageContent = "";
-            if (
-              getLastMessage.ok &&
-              Array.isArray(LastMessage.content) &&
-              LastMessage.content.length > 0
-            ) {
-              const lastContent =
-                LastMessage.content[LastMessage.content.length - 1];
-              console.log("lastcontent=" + lastContent);
-              const content = lastContent.content || [];
-              lastMessageContent =
-                content.length > 0 ? content[content.length - 1].message : "";
-            }
-            console.log(Name);
+      //       //  if(getLastMessage.status==200){ console.log(
+      //       //     "lastMessage of " +
+      //       //       friendEmail +
+      //       //       " => " +
+      //       //       LastMessage
+      //       //   );
+      //       //  }
+      //       let lastMessageIndex = -1;
+      //       let lastMessageContent = "";
+      //       if (
+      //         getLastMessage.ok &&
+      //         Array.isArray(LastMessage.content) &&
+      //         LastMessage.content.length > 0
+      //       ) {
+      //         const lastContent =
+      //           LastMessage.content[LastMessage.content.length - 1];
+      //         console.log("lastcontent=" + lastContent);
+      //         const content = lastContent.content || [];
+      //         lastMessageContent =
+      //           content.length > 0 ? content[content.length - 1].message : "";
+      //       }
+      //       console.log(Name);
+      const friendsData = await Promise.all(
+           allFriends.map(async (friend) => {
             return {
               myName: Name,
               partnerEmail: friend.email,
               partnerName: friend.name,
               partnerAvatarUrl: friend.avatarUrl,
-              LastMessage: lastMessageContent,
-              lastMessageDate: getLastMessage.ok
-                ? LastMessage?.date || null
-                : null,
-              me: getLastMessage.ok ? LastMessage?.author === userEmail : false,
+              LastMessage: " ",
+              lastMessageDate: new Date(),
+              me: true,
             };
-          }
-          else{
-          const dt =new Date();
-          return {
-
-           
-             myName: Name,
-              partnerEmail: friend.email,
-              partnerName: friend.name,
-              partnerAvatarUrl: friend.avatarUrl,
-              LastMessage: "Click to Chat..",
-              lastMessageDate: dt,
-                
-              me:true,
-            };
-
-          }
-        })
-      );
+     } )) ;
+        
+      
       console.log("1");
       setFriendsList(friendsData);
       console.log(friendsData);
@@ -361,7 +345,6 @@ export default function SideBar({
               partnerName={conversation.partnerName}
               partnerAvatar={conversation.partnerAvatar}
               lastMessage={conversation.lastMessage}
-              lastMessageDate={dt}
               avatarUrl={conversation.avatarUrl}
               me={conversation.me}
               setShowChat={setShowChat}
