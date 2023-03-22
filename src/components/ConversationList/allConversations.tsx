@@ -11,7 +11,7 @@ partnerEmail: string;
 partnerName: string;
 partnerAvatar: string;
 lastMessage: string;
-lastMessageDate: string;
+
 avatarUrl: string;
 me:boolean;
 setShowChat: (value: string) => void;
@@ -19,7 +19,7 @@ setShowChat: (value: string) => void;
 }
 
 export default function AllConversations(props: ConversationListProps) {
-  const { isFirstConversation,myName,partnerEmail,partnerName,lastMessage,lastMessageDate,avatarUrl,me,setShowChat } = props;
+  const { isFirstConversation,myName,partnerEmail,partnerName,lastMessage,avatarUrl,me,setShowChat } = props;
 
   const borderHeight = isFirstConversation ? "0px" : "1px"
   const [ isHover, seHover ] = useState(false);
@@ -50,7 +50,7 @@ export default function AllConversations(props: ConversationListProps) {
   {me ? `${myName} : ${lastMessage}` : `${partnerName} : ${lastMessage}`}
 </span>          </div>
           <div className="flex flex-col w-auto text-[#aebac1]">
-            <h1 className="text-xs">{lastMessageDate}</h1>
+            <h1 className="text-xs"></h1>
             {
               isHover ? (
                 <span className="flex cursor-pointer h-full items-center justify-center">

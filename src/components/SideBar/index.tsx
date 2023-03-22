@@ -13,29 +13,53 @@ export default function SideBar({
   setseeallinvites,
   setShowChat,
 }) {
-  const [name, setName] = useState("");
+  const [Name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [lastM,setLastM]=useState([{me:false,message:"Click to Chat.."}]);
+  const [lastM, setLastM] = useState([
+    { me: false, message: "Click to Chat.." },
+  ]);
   const [avatarImage, setAvatarImage] = useState("");
-  useEffect(() => {
-    // Fetch user info from the API using the email stored in localStorage
-    const userEmail = localStorage.getItem("userEmail");
+//   useEffect(() => {
+//     // Fetch user info from the API using the email stored in localStorage
+//     const userEmail = localStorage.getItem("userEmail");
 
-    fetch(`http://localhost:8080/api/user/info/${userEmail}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setName(data.name);
-        setEmail(data.email);
-        setAvatarImage(data.avatarUrl);
-      })
-      .catch((error) => console.error(error));
-  }, []);
+//     async function fetchUserDetails(){
+// await fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+//       .then((response) => response.json())
+//       .then((data) => {
+        
+//         setName(data.name);
+//         setEmail(data.email);
+//         setAvatarImage(data.avatarUrl);
+//       })
+//       .catch((error) => console.error(error));
+//     }
+   
+//     fetchUserDetails();
+//   }, []);
+
+  console.log("name"+Name);
 
   const [friendsList, setFriendsList] = useState([]);
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
     const token = localStorage.getItem("token");
     async function fetchFriends() {
+
+
+      await fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+      .then((response) => response.json())
+      .then((data) => {
+        
+        setName(data.name);
+        setEmail(data.email);
+        setAvatarImage(data.avatarUrl);
+      })
+      .catch((error) => console.error(error));
+    
+
+
+
       const headers = {
         Accept: "*/*",
         Authorization: `Bearer ${token}`,
@@ -48,34 +72,29 @@ export default function SideBar({
       );
       const allFriends = await getFriends.json();
 
+      console.log("friendlist=" + JSON.stringify(allFriends));
 
       const friendsData = await Promise.all(
-        allFriends.map(
-          async (friend) => {
-            console.log(friend.email);
-            const friendEmail = friend.email;
-            const getLastMessage = await fetch(
-              `http://localhost:8080/api/message/${friendEmail}/last-message`,
-              { headers }
-            );
+        allFriends.map(async (friend) => {
+          console.log(friend.email);
+          const friendEmail = friend.email;
+          const getLastMessage = await fetch(
+            `http://localhost:8080/api/message/${friendEmail}/last-message`,
+            { headers }
+          );
 
-            const LastMessage1= await getLastMessage.json();
-              console.log(LastMessage1);
+          const LastMessage1 = await getLastMessage.json();
 
-
-              
+          console.log(LastMessage1);
 
           const parsedMessage = JSON.parse(JSON.stringify(LastMessage1));
-          if (!LastMessage1.ok) {
-           console.error(`HTTP error! avi: ${LastMessage1.status}`);
-          }
-          console.log("does it come here45");
-          const blockData = JSON.parse(
-            JSON.stringify(parsedMessage.content)
-          );
-            console.log(friendEmail+"blockdata="+blockData);
+          if (LastMessage1.ok) {
+           
 
-            
+            console.log("does it come here45");
+            const blockData = JSON.parse(JSON.stringify(parsedMessage.content));
+            console.log(friendEmail + "blockdata=" + blockData);
+
             if (blockData.content && blockData.content.message) {
               const message = blockData.content.message;
               console.log("jsonObject=" + message);
@@ -83,28 +102,33 @@ export default function SideBar({
               console.log("Invalid message format");
             }
 
+            const LastMessage = JSON.parse(JSON.stringify(LastMessage1));
+            // const =JSON.parse(LastMessage1);
 
-           const LastMessage = JSON.parse(JSON.stringify(LastMessage1));
-           // const =JSON.parse(LastMessage1);
-
-          //  if(getLastMessage.status==200){ console.log(
-          //     "lastMessage of " +
-          //       friendEmail +
-          //       " => " +
-          //       LastMessage
-          //   );
-          //  }
+            //  if(getLastMessage.status==200){ console.log(
+            //     "lastMessage of " +
+            //       friendEmail +
+            //       " => " +
+            //       LastMessage
+            //   );
+            //  }
             let lastMessageIndex = -1;
-            let lastMessageContent = '';
-            if (getLastMessage.ok && Array.isArray(LastMessage.content) && LastMessage.content.length > 0) {
-              const lastContent = LastMessage.content[LastMessage.content.length - 1];
-              console.log("lastcontent="+lastContent);
+            let lastMessageContent = "";
+            if (
+              getLastMessage.ok &&
+              Array.isArray(LastMessage.content) &&
+              LastMessage.content.length > 0
+            ) {
+              const lastContent =
+                LastMessage.content[LastMessage.content.length - 1];
+              console.log("lastcontent=" + lastContent);
               const content = lastContent.content || [];
-              lastMessageContent = content.length > 0 ? content[content.length - 1].message : '';
+              lastMessageContent =
+                content.length > 0 ? content[content.length - 1].message : "";
             }
-            
+            console.log(Name);
             return {
-              myName: name,
+              myName: Name,
               partnerEmail: friend.email,
               partnerName: friend.name,
               partnerAvatarUrl: friend.avatarUrl,
@@ -115,7 +139,23 @@ export default function SideBar({
               me: getLastMessage.ok ? LastMessage?.author === userEmail : false,
             };
           }
-        )
+          else{
+          const dt =new Date();
+          return {
+
+           
+             myName: name,
+              partnerEmail: friend.email,
+              partnerName: friend.name,
+              partnerAvatarUrl: friend.avatarUrl,
+              LastMessage: "Click to Chat..",
+              lastMessageDate: dt,
+                
+              me:true,
+            };
+
+          }
+        })
       );
       console.log("1");
       setFriendsList(friendsData);
@@ -207,7 +247,7 @@ export default function SideBar({
         </div>
         <div className="mr-20">
           {isOpen && showprofile && (
-            <ProfilePage name={name} email={email} avatarUrl={avatarImage} />
+            <ProfilePage name={Name} email={email} avatarUrl={avatarImage} />
           )}
         </div>
 
@@ -310,16 +350,18 @@ export default function SideBar({
         })} */}
 
         {friendsList.map((conversation, index) => {
+           const dt=new Date();
           return (
+           
             <AllConversations
               key={index}
               isFirstConversation={index == 0}
-              myName={conversation.myName}
+              myName={Name}
               partnerEmail={conversation.partnerEmail}
               partnerName={conversation.partnerName}
               partnerAvatar={conversation.partnerAvatar}
               lastMessage={conversation.lastMessage}
-              lastMessageDate={conversation.lastMessageDate}
+              lastMessageDate={dt}
               avatarUrl={conversation.avatarUrl}
               me={conversation.me}
               setShowChat={setShowChat}
