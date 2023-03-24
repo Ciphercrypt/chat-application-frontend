@@ -24,8 +24,8 @@ export default function InviteComp(props: ConversationListProps) {
   const [isHover, seHover] = useState(false);
 
   const handleAcceptClick = async () => {
-    const userEmail = localStorage.getItem("userEmail");
-    const token = localStorage.getItem("token");
+    const userEmail = sessionStorage.getItem("userEmail");
+    const token = sessionStorage.getItem("token");
     try {
 
         const headers = {
@@ -54,8 +54,8 @@ export default function InviteComp(props: ConversationListProps) {
   };
   
   const handleDeleteClick = async () => {
-    const userEmail = localStorage.getItem("userEmail");
-    const token = localStorage.getItem("token");
+    const userEmail = sessionStorage.getItem("userEmail");
+    const token = sessionStorage.getItem("token");
     try {
         const headers = {
             Accept: "*/*",

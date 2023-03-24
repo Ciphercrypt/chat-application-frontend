@@ -47,8 +47,8 @@ function HomeContent() {
         <div className="flex w-[70%] bg-[#222E35]">
           {homechat && showChat ? (
             <ConversationDetails
-            showChat={showChat}
-             />
+              showChat={showChat}
+            />
           ) : (
             homechat && <IconHome />
           )}

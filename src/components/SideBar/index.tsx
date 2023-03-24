@@ -5,8 +5,8 @@ import NotificationPanel from "../FloatingOptions";
 import ProfilePage from "../FloatingOptions/Profilepage";
 import SearchPeople from "../FloatingOptions/SearchPeople";
 import axios from "axios";
-import Avatar from "@mui/material/Avatar";
-import AllConversations from "../ConversationList/AllConversations";
+import Avatar from "@mui/material/Avatar"
+import AllConversations from "../ConversationList/allConversations";
 
 export default function SideBar({
   setsendinvite,
@@ -20,8 +20,8 @@ export default function SideBar({
   ]);
   const [avatarImage, setAvatarImage] = useState("");
 //   useEffect(() => {
-//     // Fetch user info from the API using the email stored in localStorage
-//     const userEmail = localStorage.getItem("userEmail");
+//     // Fetch user info from the API using the email stored in sessionStorage
+//     const userEmail = sessionStorage.getItem("userEmail");
 
 //     async function fetchUserDetails(){
 // await fetch(`http://localhost:8080/api/user/info/${userEmail}`)
@@ -38,19 +38,25 @@ export default function SideBar({
 //     fetchUserDetails();
 //   }, []);
 
-  console.log("name"+Name);
-
   const [friendsList, setFriendsList] = useState([]);
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    const token = localStorage.getItem("token");
+    
     async function fetchFriends() {
-
-
-      await fetch(`http://localhost:8080/api/user/info/${userEmail}`)
+      const userEmail = sessionStorage.getItem("userEmail");
+      const token = sessionStorage.getItem("token");
+      console.log("Token : " + token)
+      fetch(
+        `http://localhost:8080/api/user/info/${userEmail}`,
+        {
+          method:'get',
+          headers: {
+            'Authorization':'Bearer ' + token
+          }
+        }
+      )
       .then((response) => response.json())
       .then((data) => {
-        
+        console.log(data.avatarUrl)
         setName(data.name);
         setEmail(data.email);
         setAvatarImage(data.avatarUrl);
@@ -60,15 +66,14 @@ export default function SideBar({
 
 
 
-      const headers = {
-        Accept: "*/*",
-        Authorization: `Bearer ${token}`,
-        username: userEmail as string,
-      };
-
       const getFriends = await fetch(
         "http://localhost:8080/api/conversation/my-conversation",
-        { headers }
+        {
+          method:'get',
+          headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+          }
+        }
       );
       const allFriends = await getFriends.json();
 

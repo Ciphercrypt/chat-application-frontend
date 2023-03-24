@@ -16,8 +16,8 @@ const jwt = require("jsonwebtoken");
 import AvatarChooser from "./avatarchooser"; // import the AvatarChooser component
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+//import { useRouter } from "next/router";
 import { useRouter } from "next/router";
-
 import { json } from "stream/consumers";
 import { LocalAtm } from "@material-ui/icons";
 
@@ -27,19 +27,18 @@ async function sendRegistrationRequest(data: {
   name: string;
   email: string;
   password: string;
-  avatarUrl: string;
+  avatar: File;
 }) {
   const formData = new FormData();
   formData.append("email", data.email);
   formData.append("name", data.name);
   formData.append("password", data.password);
 
-  formData.append("avatar", data.avatarUrl);
-
+  formData.append("avatar", data.avatar);
+  console.log()
   try {
     const response = await fetch("http://localhost:8080/api/register", {
       method: "POST",
-
       body: formData,
     });
 
@@ -54,14 +53,13 @@ async function sendRegistrationRequest(data: {
       toast.success("Registration successful!");
       toast.success("Redirecting to chats..");
 
-      const { token } = await response.json();
-      const decodedToken = jwt.decode(token);
-      console.log(decodedToken.sub);
+      const token = await response.text();
 
-      localStorage.setItem("userEmail", decodedToken.sub);
-      localStorage.setItem("token", JSON.stringify(token));
-
-      console.log(decodedToken);
+      sessionStorage.setItem("userEmail", formData.get('email') as string);
+      sessionStorage.setItem("token", JSON.stringify(token));
+      //const router = useRouter();
+      //router.push('/home')
+      
     }
   } catch (error) {
     console.error(error);
@@ -80,17 +78,17 @@ export default function SignUp({ isRegistered, setisRegistered }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    data.append(
-      "avatarfile",
-      "https://images.pexels.com/photos/1643457/pexels-photo-1643457.jpeg"
-    ); // add the avatar file to the form data
+    // data.append(
+    //   "avatarfile",
+    //   "https://images.pexels.com/photos/1643457/pexels-photo-1643457.jpeg"
+    // ); // add the avatar file to the form data
 
     try {
       const response = await sendRegistrationRequest({
         name: data.get("name") as string,
         email: data.get("email") as string,
         password: data.get("password") as string,
-        avatarUrl: data.get("avatarfile") as string,
+        avatar: avatarFile as File,
       });
 
       // do something with the token or redirect to another page
@@ -115,7 +113,7 @@ export default function SignUp({ isRegistered, setisRegistered }) {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign up
           </Typography>
           <Box
             component="form"

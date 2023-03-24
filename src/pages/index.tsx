@@ -10,7 +10,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const userEmailFromStorage = localStorage.getItem("userEmail");
+    const userEmailFromStorage = sessionStorage.getItem("userEmail");
 
     if (userEmailFromStorage ) {
       setUserEmail(userEmailFromStorage);

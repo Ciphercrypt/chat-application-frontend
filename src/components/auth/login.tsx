@@ -18,6 +18,7 @@ import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
+
 const theme = createTheme();
 
 export default function LoginScreen({isLoggedIn,setIsLoggedIn}) {
@@ -49,7 +50,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   try {
     const response = await fetch('http://localhost:8080/api/login', {
       method: 'POST',
-     
       body: formData,
     });
 
@@ -61,14 +61,14 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
     console.log('Logged in successfully');
     toast.success("Logged in successfully");
-    console.log(JSON.stringify(response));
-    const { token } = await response.json();
-    const decodedToken = jwt.decode(token);
-    console.log(decodedToken.sub);
+    // const { token } = await response.json();
+    // const decodedToken = jwt.decode(token);
+    // console.log(decodedToken.sub);
     
-    localStorage.setItem("userEmail", decodedToken.sub);
-    localStorage.setItem("token", JSON.stringify(token));
+    const token = await response.text();
 
+    sessionStorage.setItem("userEmail", data.get('email') as string);
+    sessionStorage.setItem("token", token);
 
   setIsLoggedIn(true);
    

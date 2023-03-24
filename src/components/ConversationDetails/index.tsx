@@ -17,13 +17,10 @@ export default function ConversationDetails({ showChat }) {
   const [stompClient1, setStompClient1] = useState(null);
   const [subscription, setSubscription] = useState(null);
 
-  const token = localStorage.getItem("token");
-  const userEmail = localStorage.getItem("userEmail");
+  const token = sessionStorage.getItem("token");
+  const userEmail = sessionStorage.getItem("userEmail");
   const headers = {
-    Accept: "*/*",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    "Content-type": "application/json",
+
     Authorization: `Bearer ${token}`,
     username: userEmail as string,
   };
@@ -108,7 +105,8 @@ export default function ConversationDetails({ showChat }) {
   const jwtToken = token?.replace(/['"]+/g, "");
 
   useEffect(() => {
-    const sock = new SockJS("http://localhost:8080/api/ws?token=" + jwtToken);
+    console.log("Making ws")
+    const sock = new SockJS("http://localhost:8080/api/ws?token=" + sessionStorage.getItem('token'));
     const stompClient = Stomp.over(sock);
 
     stompClient.connect({}, () => {
@@ -155,7 +153,7 @@ export default function ConversationDetails({ showChat }) {
       };
       setConvos((convos) => convos.concat(teste));
       stompClient1.send(
-        `/ms/send/${showChat}`,
+        `http://localhost:8080/ms/send/${showChat}`,
         {},
         JSON.stringify({ content: teste })
       );
@@ -179,7 +177,8 @@ export default function ConversationDetails({ showChat }) {
               <h1 className="text-white font-normal">{contactName}</h1>
               <h5>{contactEmail}</h5>
             </div>
-
+                  <button className={`px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-black 
+              `}>lock</button>
             <div className="flex items-center text-[#8696a0] gap-2">
               <svg
                 viewBox="0 0 24 24"
@@ -209,7 +208,7 @@ export default function ConversationDetails({ showChat }) {
 
         <div
           className="flex flex-col w-full h-full px-24 py-6 overflow-y-auto"
-          style={{ backgroundImage: "url('/assets/images/background.jpg')" }}
+         /* style={{ backgroundImage: "url('/assets/images/background.jpg')" }}*/
         >
           {convos.map((conv, index) => {
 

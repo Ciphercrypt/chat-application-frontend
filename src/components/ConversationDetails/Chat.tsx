@@ -10,12 +10,6 @@ export default function Chat({
     contactEmail,
     convos}) {
  
-  
-
-
-  
-  
-
   return (
     <>
    
@@ -27,6 +21,7 @@ export default function Chat({
             <Avatar src={avatarUrl} />
             <h1 className="text-white font-normal">{ContactName}</h1>
             <h5>{contactEmail}</h5>
+            <button>lock</button>
           </div>
           
           <div className="flex items-center text-[#8696a0] gap-2">

@@ -29,21 +29,19 @@ export default function InvitesPage() {
     // Search for username code here
   };
 
-  const userEmail = localStorage.getItem("userEmail");
-  const token = localStorage.getItem("token");
+  const userEmail = sessionStorage.getItem("email");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     async function fetchInvites() {
-      const headers = {
-        Accept: "*/*",
-        Authorization: `Bearer ${token}`,
-        username: userEmail as string,
-      };
-
       const sentInvitesResponse = await fetch(
         "http://localhost:8080/api/invite/sent",
-
-        { headers }
+        {
+          method:'get',
+          headers: {
+            'Authorization':'Bearer ' + sessionStorage.getItem('token')
+          }
+        }
       );
       const sentInvitesData1 = await sentInvitesResponse.json();
       //const sentInvitesData = JSON.stringify(sentInvitesData1);
@@ -52,7 +50,12 @@ export default function InvitesPage() {
 
       const receivedInvitesResponse = await fetch(
         "http://localhost:8080/api/invite/received",
-        { headers }
+        {
+          method:'get',
+          headers: {
+            'Authorization':'Bearer ' + sessionStorage.getItem('token')
+          }
+        }
       );
 
       const receivedInvitesData1 = await receivedInvitesResponse.json();
@@ -69,7 +72,12 @@ export default function InvitesPage() {
         Array.from(emailsRec).map(async (email) => {
           const userResponse = await fetch(
             `http://localhost:8080/api/user/info/${email}`,
-            { headers }
+            {
+              method:'get',
+              headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+              }
+            }
           );
           const receivedUserData = await userResponse.json();
           return {
@@ -95,7 +103,12 @@ export default function InvitesPage() {
         Array.from(emails).map(async (email) => {
           const userResponse = await fetch(
             `http://localhost:8080/api/user/info/${email}`,
-            { headers }
+            {
+              method:'get',
+              headers: {
+                'Authorization':'Bearer ' + sessionStorage.getItem('token') 
+              }
+            }
           );
           const userData = await userResponse.json();
           return {
